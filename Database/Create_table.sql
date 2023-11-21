@@ -72,7 +72,8 @@ CREATE TABLE Patient
 	patient_name nvarchar(30),
 	patient_birthday DATE,
 	patient_address nvarchar(40),
-	patient_phone char(10)
+	patient_phone char(10),
+	patient_gender nvarchar(3)
 
 	CONSTRAINT PK_Patient
 	PRIMARY KEY(patient_id)
