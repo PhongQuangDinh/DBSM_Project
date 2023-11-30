@@ -17,37 +17,30 @@ CREATE TABLE Account
 	username varchar(10) NOT NULL UNIQUE,
 	[password] varchar(15) NOT NULL,
 	account_status BIT,
-	[role] char(2)
+
 
 	CONSTRAINT PK_Account
 	PRIMARY KEY (account_id)
 )
 
---table ADMIN
-CREATE TABLE [Admin]
+--table Person
+CREATE TABLE PERSON
 (
-	admin_id char(5),
-	admin_name nvarchar(30)
+	person_id char(5), 
+	person_name nvarchar(30),
+	person_birthday DATE,
+	person_address nvarchar(40),
+	person_gender nvarchar(3),
+	person_type char(2)
 
-	CONSTRAINT PK_Admin
-	PRIMARY KEY(admin_id)
-)
-
---table STAFF
-CREATE TABLE Staff
-(
-	staff_id char(5),
-	staff_name nvarchar(30)
-
-	CONSTRAINT PK_Staff
-	PRIMARY KEY(staff_id)
+	CONSTRAINT PK_Person
+	PRIMARY KEY (person_id)
 )
 
 --table DENTIST
 CREATE TABLE Dentist
 (
 	dentist_id char(5),
-	dentist_name nvarchar(30)
 
 	CONSTRAINT PK_Dentist
 	PRIMARY KEY(dentist_id)
@@ -69,9 +62,6 @@ CREATE TABLE personalAppointment
 CREATE TABLE Patient
 (
 	patient_id char(5),
-	patient_name nvarchar(30),
-	patient_birthday DATE,
-	patient_address nvarchar(40),
 	patient_phone char(10)
 
 	CONSTRAINT PK_Patient
@@ -173,16 +163,6 @@ CREATE TABLE Drug
 
 
 --rang buoc
-ALTER TABLE [Admin]
-ADD
-	CONSTRAINT FK_Admin_Account
-	FOREIGN KEY (admin_id)
-	REFERENCES Account
-ALTER TABLE Staff
-ADD
-	CONSTRAINT FK_Staff_Account
-	FOREIGN KEY (staff_id)
-	REFERENCES Account
 ALTER TABLE Dentist
 ADD
 	CONSTRAINT FK_Dentist_Account
