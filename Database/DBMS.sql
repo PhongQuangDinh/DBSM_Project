@@ -15,7 +15,7 @@ CREATE TABLE Account
 (
 	account_id char(5),
 	username varchar(10) NOT NULL UNIQUE,
-	[password] varchar(15),
+	[password] varchar(15) NOT NULL,
 	account_status BIT,
 	[role] char(2)
 
@@ -26,31 +26,31 @@ CREATE TABLE Account
 --table ADMIN
 CREATE TABLE [Admin]
 (
-	account_id char(5),
+	admin_id char(5),
 	admin_name nvarchar(30)
 
 	CONSTRAINT PK_Admin
-	PRIMARY KEY(account_id)
+	PRIMARY KEY(admin_id)
 )
 
 --table STAFF
 CREATE TABLE Staff
 (
-	account_id char(5),
+	staff_id char(5),
 	staff_name nvarchar(30)
 
 	CONSTRAINT PK_Staff
-	PRIMARY KEY(account_id)
+	PRIMARY KEY(staff_id)
 )
 
 --table DENTIST
 CREATE TABLE Dentist
 (
-	account_id char(5),
+	dentist_id char(5),
 	dentist_name nvarchar(30)
 
 	CONSTRAINT PK_Dentist
-	PRIMARY KEY(account_id)
+	PRIMARY KEY(dentist_id)
 )
 
 --table personalAppointment
@@ -176,17 +176,17 @@ CREATE TABLE Drug
 ALTER TABLE [Admin]
 ADD
 	CONSTRAINT FK_Admin_Account
-	FOREIGN KEY (account_id)
+	FOREIGN KEY (admin_id)
 	REFERENCES Account
 ALTER TABLE Staff
 ADD
 	CONSTRAINT FK_Staff_Account
-	FOREIGN KEY (account_id)
+	FOREIGN KEY (staff_id)
 	REFERENCES Account
 ALTER TABLE Dentist
 ADD
 	CONSTRAINT FK_Dentist_Account
-	FOREIGN KEY (account_id)
+	FOREIGN KEY (dentist_id)
 	REFERENCES Account
 ALTER TABLE Patient
 ADD
@@ -656,5 +656,3 @@ VALUES
 ('PA018', 'Trần Thị Bích', '2001-02-02', '456 Le Lai Street, Ho Chi Minh City', '0987654322'),
 ('PA019', 'Lê Văn Cường', '2002-03-03', '789 Nguyen Van Linh Street, Ho Chi Minh City', '0987654323'),
 ('PA020', 'Dương Thị Dũng', '2003-04-04', '1011 Pham Ngu Lao Street, Ho Chi Minh City', '0987654324');
-
-
