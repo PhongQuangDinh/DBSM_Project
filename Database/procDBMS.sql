@@ -54,23 +54,21 @@ CREATE PROCEDURE insertAccount
 	@accountId char(5),
 	@username varchar(10),
 	@password varchar(15),
-	@accountStatus BIT,
-	@role char(2)
+	@accountStatus BIT
 AS
 BEGIN
 	INSERT INTO Account (
 	account_id,
 	username,
 	password,
-	account_status,
-	role
+	account_status
 	)
 	VALUES
 	(@accountId,
 	@username,
 	@password,
-	@accountStatus,
-	@role);
+	@accountStatus
+	);
 END;
 
 go
@@ -78,57 +76,95 @@ CREATE PROCEDURE updateAccount
 	@accountId char(5),
 	@username varchar(10),
 	@password varchar(15),
-	@accountStatus BIT,
-	@role char(2)
+	@accountStatus BIT
 AS
 BEGIN
 	UPDATE Account
 	SET username = @username,
 	password = @password,
-	account_status = @accountStatus,
-	role = @role
+	account_status = @accountStatus
 	WHERE account_id = @accountId;
 END;
 
 go
-CREATE PROCEDURE insertPatient
-	@patient_id char(5),
-	@patient_name nvarchar(30),
-	@patient_birthday date,
-	@patient_address nvarchar(40),
-	@patient_phone char(10)
+CREATE PROCEDURE insertPerson
+	@person_id char(5),
+	@person_name nvarchar(30),
+	@person_birthday DATE,
+	@person_address nvarchar(40),
+	@person_gender nvarchar(3),
+	@person_type char(2)
 AS
 BEGIN
-	INSERT INTO Patient (
-	patient_id,
-	patient_name,
-	patient_birthday,
-	patient_address,
-	patient_phone
-	)
-	VALUES
-	(@patient_id,
-	@patient_name,
-	@patient_birthday,
-	@patient_address,
-	@patient_phone);
+    INSERT INTO PERSON
+    (person_id, person_name, person_birthday, person_address, person_gender, person_type)
+    VALUES
+    (@person_id, @person_name, @person_birthday, @person_address, @person_gender, @person_type)
+END;
+
+go
+CREATE PROCEDURE updatePerson
+	@person_id char(5),
+	@person_name nvarchar(30),
+	@person_birthday DATE,
+	@person_address nvarchar(40),
+	@person_gender nvarchar(3),
+	@person_type char(2)
+AS
+BEGIN
+    UPDATE PERSON
+    SET person_name = @person_name,
+        person_birthday = @person_birthday,
+        person_address = @person_address,
+        person_gender = @person_gender,
+        person_type = @person_type
+    WHERE person_id = @person_id
+
+END;
+
+go
+CREATE PROCEDURE insertPatient
+	@person_id char(5),
+	@person_name nvarchar(30),
+	@person_birthday DATE,
+	@person_address nvarchar(40),
+	@person_gender nvarchar(3),
+	@person_type char(2),
+	@person_phone char(10)
+AS
+BEGIN
+    INSERT INTO PERSON
+    (person_id, person_name, person_birthday, person_address, person_gender, person_type, person_phone)
+    VALUES
+    (@person_id, @person_name, @person_birthday, @person_address, @person_gender, @person_type, @person_phone)
+	INSERT INTO PATIENT
+    (patient_id, patient_phone)
+    VALUES
+    (@person_id, @person_phone)
 END;
 
 go
 CREATE PROCEDURE updatePatient
-	@patient_id char(5),
-	@patient_name nvarchar(30),
-	@patient_birthday date,
-	@patient_address nvarchar(40),
-	@patient_phone char(10)
+	@person_id char(5),
+	@person_name nvarchar(30),
+	@person_birthday DATE,
+	@person_address nvarchar(40),
+	@person_gender nvarchar(3),
+	@person_type char(2),
+	@person_phone char(10)
 AS
 BEGIN
-	UPDATE Patient
-	SET patient_name = @patient_name,
-	patient_birthday = @patient_birthday,
-	patient_address = @patient_address,
-	patient_phone = @patient_phone
-	WHERE patient_id = @patient_id;
+    UPDATE PERSON
+    SET person_name = @person_name,
+        person_birthday = @person_birthday,
+        person_address = @person_address,
+        person_gender = @person_gender,
+        person_type = @person_type,
+        person_phone = @person_phone
+    WHERE person_id = @person_id
+	UPDATE PATIENT
+	SET patient_phone = @person_phone
+	WHERE patient_id = @person_id
 END;
 
 go
