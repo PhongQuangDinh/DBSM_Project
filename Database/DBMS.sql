@@ -31,7 +31,8 @@ CREATE TABLE PERSON
 	person_birthday DATE,
 	person_address nvarchar(40),
 	person_gender nvarchar(3),
-	person_type char(2)
+	person_type char(2),
+	person_phone char(10)
 
 	CONSTRAINT PK_Person
 	PRIMARY KEY (person_id)
@@ -62,7 +63,6 @@ CREATE TABLE personalAppointment
 CREATE TABLE Patient
 (
 	patient_id char(5),
-	patient_phone char(10)
 
 	CONSTRAINT PK_Patient
 	PRIMARY KEY(patient_id)
