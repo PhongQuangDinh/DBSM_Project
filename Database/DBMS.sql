@@ -294,7 +294,7 @@ VALUES
 ('PA019', 'patient19', '123456', 'PA'),
 ('PA020', 'patient20', '123456', 'PA');
 
-INSERT INTO Staff (account_id, staff_name)
+INSERT INTO Staff (staff_id, staff_name)
 VALUES
 ('ST001', 'Staff 1'),
 ('ST002', 'Staff 2'),
@@ -304,14 +304,14 @@ VALUES
 ('ST006', 'Staff 6'),
 ('ST007', 'Staff 7');
 
-INSERT INTO Admin (account_id, admin_name)
+INSERT INTO Admin (admin_id, admin_name)
 VALUES
 ('AD001', 'Admin 1'),
 ('AD002', 'Admin 2'),
 ('AD003', 'Admin 3'),
 ('AD004', 'Admin 4');
 
-INSERT INTO Dentist (account_id, dentist_name)
+INSERT INTO Dentist (dentist_id, dentist_name)
 VALUES
 ('DE001', 'Dentist 1'),
 ('DE002', 'Dentist 2'),
