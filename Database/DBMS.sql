@@ -15,7 +15,7 @@ CREATE TABLE Account
 (
 	account_id char(5),
 	username varchar(10) NOT NULL UNIQUE,
-	[password] varchar(15) NOT NULL,
+	[password] varchar(32) NOT NULL,
 	account_status BIT,
 
 
@@ -31,8 +31,7 @@ CREATE TABLE PERSON
 	person_birthday DATE,
 	person_address nvarchar(40),
 	person_gender nvarchar(3),
-	person_type char(2),
-	person_phone char(10)
+	person_type char(2)
 
 	CONSTRAINT PK_Person
 	PRIMARY KEY (person_id)
@@ -63,6 +62,7 @@ CREATE TABLE personalAppointment
 CREATE TABLE Patient
 (
 	patient_id char(5),
+	person_phone char(10) NOT NULL
 
 	CONSTRAINT PK_Patient
 	PRIMARY KEY(patient_id)
