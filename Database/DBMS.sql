@@ -16,9 +16,8 @@ CREATE TABLE Account
 	account_id char(5),
 	username varchar(10) NOT NULL UNIQUE,
 	[password] varchar(32) NOT NULL,
-	account_status BIT,
-
-
+	account_status BIT NOT NULL,
+	
 	CONSTRAINT PK_Account
 	PRIMARY KEY (account_id)
 )
@@ -27,11 +26,11 @@ CREATE TABLE Account
 CREATE TABLE Person
 (
 	person_id char(5), 
-	person_name nvarchar(30),
+	person_name nvarchar(30) NOT NULL,
 	person_birthday DATE,
 	person_address nvarchar(40),
-	person_gender nvarchar(3),
-	person_type char(2),
+	person_gender nvarchar(3) NOT NULL,
+	person_type char(2) NOT NULL,
 	account_id char(5)
 
 	CONSTRAINT PK_Person
@@ -123,10 +122,10 @@ CREATE TABLE MedicalRecord
 (
 	medical_record_id char(5),
 	examination_date date,
-	pay_status bit,
-	patient_id char(5),
-	dentist_id char(5),
-	appointment_id char(5)
+	pay_status bit NOT NULL,
+	patient_id char(5) NOT NULL,
+	dentist_id char(5) NOT NULL,
+	appointment_id char(5) NOT NULL
 
 	CONSTRAINT PK_MedicalRecord
 	PRIMARY KEY (medical_record_id)
@@ -136,12 +135,12 @@ CREATE TABLE MedicalRecord
 CREATE TABLE Bill
 (
 	bill_id char(5),
-	service_cost money,
-	appointment_cost money,
-	drugs_cost money,
-	cost_total money,
+	service_cost float,
+	appointment_cost float,
+	drugs_cost float,
+	cost_total float,
 	payment_date date,
-	patient_id char(5),
+	patient_id char(5) NOT NULL,
 	medical_record_id char(5)
 
 	CONSTRAINT PK_Bill
@@ -153,7 +152,7 @@ CREATE TABLE [Service]
 (
 	service_id char(5),
 	[service_name] nvarchar(30),
-	cost money
+	cost Float NOT NULL
 
 	CONSTRAINT PK_Service
 	PRIMARY KEY(service_id)
@@ -164,7 +163,7 @@ CREATE TABLE [Service]
 CREATE TABLE ServiceList
 (
 	service_id char(5),
-	medical_record_id char(5),
+	medical_record_id char(5) NOT NULL,
 	service_quantity int
 
 	CONSTRAINT PK_SERVICES
@@ -174,7 +173,7 @@ CREATE TABLE ServiceList
 CREATE TABLE Prescription
 (
 	drug_id char(5),
-	medical_record_id char(5),
+	medical_record_id char(5) NOT NULL,
 	drug_quantity int NOT NULL Check (drug_quantity>=1)
 
 	CONSTRAINT PK_Prescription
@@ -189,7 +188,7 @@ CREATE TABLE Drug
 	drug_name nvarchar(30),
 	indication nvarchar(50),
 	expiration_date date,
-	price money,
+	price float,
 	drug_stock_quantity int
 
 	CONSTRAINT PK_Drug

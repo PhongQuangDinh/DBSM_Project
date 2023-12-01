@@ -1,5 +1,117 @@
-USE QLPHONGKHAMNHAKHOA
+﻿USE QLPHONGKHAMNHAKHOA
 GO
+
+select max(account_id) from Account
+
+--function get next ID
+CREATE or alter FUNCTION getNextID(@CurrentID CHAR(5))
+RETURNS CHAR(5)
+AS
+BEGIN
+    DECLARE @NextID CHAR(5);
+	IF (@CurrentID is not null)
+    BEGIN
+        DECLARE @id INT;
+        SET @id = CAST(@CurrentID AS INT) + 1;
+        SET @NextID = REPLICATE('0', LEN(@CurrentID) - LEN(CAST(@id AS CHAR(5)))) + CAST(@id AS CHAR(5));
+    END
+	ELSE
+    BEGIN
+		SET @NextID = '00001'
+    END
+    RETURN @NextID;
+END
+
+CREATE or ALTER PROCEDURE insertAccount
+	@username varchar(10),
+	@password varchar(32)
+AS
+BEGIN tran
+	begin try
+		if exists(select 1 from Account where username = @username)
+		begin
+			raiserror(N'Tên tài khoản đã tồn tại', 16, 1)
+			rollback 
+			return
+		end
+	
+		DECLARE @accountCurrent CHAR(5),  @accountId CHAR(5);
+		SELECT @accountCurrent = MAX(account_id)
+		FROM Account;
+		SELECT @accountId = dbo.getNextID(@accountCurrent);
+
+		INSERT INTO Account (account_id, username, password, account_status)
+		VALUES(@accountId, @username, @password, 1);
+	end try
+	begin catch
+		DECLARE @ErrorMsg VARCHAR(2000)
+		SELECT @ErrorMsg = N'Lỗi: ' + ERROR_MESSAGE()
+		RAISERROR(@ErrorMsg, 16,1)
+		ROLLBACK TRAN
+		RETURN
+	end catch
+commit tran
+
+go
+CREATE or alter PROCEDURE updatePasswordAccount
+	@username varchar(10),
+	@password varchar(15)
+AS
+BEGIN tran
+	begin try
+		declare @accountId Char(5)
+		if not exists(select 1 from Account where username = @username)
+		begin
+			raiserror(N'Tài khoản không tồn tại', 16, 1)
+			rollback tran
+			return
+		end
+		else 
+		select @accountId = account_id from Account where username = @username 
+
+		UPDATE Account
+		SET password = @password
+		WHERE account_id = @accountId;
+
+	end try
+	begin catch
+		DECLARE @ErrorMsg VARCHAR(2000)
+		SELECT @ErrorMsg = N'Lỗi: ' + ERROR_MESSAGE()
+		RAISERROR(@ErrorMsg, 16,1)
+		ROLLBACK TRAN
+		RETURN
+	end catch
+commit tran
+
+CREATE or alter PROCEDURE updateStatusAccount
+	@username varchar(10),
+	@statusAccount Bit
+AS
+BEGIN tran
+	begin try
+		declare @accountId Char(5)
+		if not exists(select 1 from Account where username = @username)
+		begin
+			raiserror(N'Tài khoản không tồn tại', 16, 1)
+			rollback tran
+			return
+		end
+		else 
+		select @accountId = account_id from Account where username = @username 
+
+		UPDATE Account
+		SET account_status = @statusAccount
+		WHERE account_id = @accountId;
+
+	end try
+	begin catch
+		DECLARE @ErrorMsg VARCHAR(2000)
+		SELECT @ErrorMsg = N'Lỗi: ' + ERROR_MESSAGE()
+		RAISERROR(@ErrorMsg, 16,1)
+		ROLLBACK TRAN
+		RETURN
+	end catch
+commit tran
 
 CREATE PROCEDURE insertPersonalAppointment
 	@personalAppointmentID char(5),
@@ -50,43 +162,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertAccount
-	@accountId char(5),
-	@username varchar(10),
-	@password varchar(15),
-	@accountStatus BIT
-AS
-BEGIN
-	INSERT INTO Account (
-	account_id,
-	username,
-	password,
-	account_status
-	)
-	VALUES
-	(@accountId,
-	@username,
-	@password,
-	@accountStatus
-	);
-END;
 
-go
-CREATE PROCEDURE updateAccount
-	@accountId char(5),
-	@username varchar(10),
-	@password varchar(15),
-	@accountStatus BIT
-AS
-BEGIN
-	UPDATE Account
-	SET username = @username,
-	password = @password,
-	account_status = @accountStatus
-	WHERE account_id = @accountId;
-END;
-
-go
 CREATE PROCEDURE insertPerson
 	@person_id char(5),
 	@person_name nvarchar(30),
