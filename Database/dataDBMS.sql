@@ -1,68 +1,55 @@
-﻿INSERT INTO Account (account_id, username, password, role)
+﻿INSERT INTO Account (account_id, username, password, account_status)
 VALUES
-('PA001', 'patient1', '123456', 'PA'),
-('PA002', 'patient2', '123456', 'PA'),
-('PA003', 'patient3', '123456', 'PA'),
-('PA004', 'patient4', '123456', 'PA'),
-('PA005', 'patient5', '123456', 'PA'),
-('AD001', 'admin1', '123456', 'AD'),
-('AD002', 'admin2', '123456', 'AD'),
-('ST001', 'staff1', '123456', 'ST'),
-('ST002', 'staff2', '123456', 'ST'),
-('ST003', 'staff3', '123456', 'ST'),
-('DE001', 'dentist1', '123456', 'DE'),
-('DE002', 'dentist2', '123456', 'DE'),
-('PA006', 'patient6', '123456', 'PA'),
-('PA007', 'patient7', '123456', 'PA'),
-('PA008', 'patient8', '123456', 'PA'),
-('PA009', 'patient9', '123456', 'PA'),
-('PA010', 'patient10', '123456', 'PA'),
-('AD003', 'admin3', '123456', 'AD'),
-('ST004', 'staff4', '123456', 'ST'),
-('ST005', 'staff5', '123456', 'ST'),
-('DE003', 'dentist3', '123456', 'DE'),
-('DE004', 'dentist4', '123456', 'DE'),
-('PA011', 'patient11', '123456', 'PA'),
-('PA012', 'patient12', '123456', 'PA'),
-('PA013', 'patient13', '123456', 'PA'),
-('PA014', 'patient14', '123456', 'PA'),
-('PA015', 'patient15', '123456', 'PA'),
-('AD004', 'admin4', '123456', 'AD'),
-('ST006', 'staff6', '123456', 'ST'),
-('ST007', 'staff7', '123456', 'ST'),
-('DE005', 'dentist5', '123456', 'DE'),
-('DE006', 'dentist6', '123456', 'DE'),
-('PA016', 'patient16', '123456', 'PA'),
-('PA017', 'patient17', '123456', 'PA'),
-('PA018', 'patient18', '123456', 'PA'),
-('PA019', 'patient19', '123456', 'PA'),
-('PA020', 'patient20', '123456', 'PA');
+('PA001', 'patient1', '123456', 1),
+('PA002', 'patient2', '123456', 1),
+('PA003', 'patient3', '123456', 1),
+('PA004', 'patient4', '123456', 1),
+('PA005', 'patient5', '123456', 1),
+('AD001', 'admin1', '123456', 1),
+('AD002', 'admin2', '123456', 1),
+('ST001', 'staff1', '123456', 1),
+('ST002', 'staff2', '123456', 1),
+('ST003', 'staff3', '123456', 1),
+('DE001', 'dentist1', '123456', 1),
+('DE002', 'dentist2', '123456', 1),
+('PA006', 'patient6', '123456', 1),
+('PA007', 'patient7', '123456', 1),
+('PA008', 'patient8', '123456', 1),
+('PA009', 'patient9', '123456', 1),
+('PA010', 'patient10', '123456', 1),
+('AD003', 'admin3', '123456', 1),
+('ST004', 'staff4', '123456', 1),
+('ST005', 'staff5', '123456', 1),
+('DE003', 'dentist3', '123456', 1),
+('DE004', 'dentist4', '123456', 1),
+('PA011', 'patient11', '123456', 1),
+('PA012', 'patient12', '123456', 1),
+('PA013', 'patient13', '123456', 1),
+('PA014', 'patient14', '123456', 1),
+('PA015', 'patient15', '123456', 1),
+('AD004', 'admin4', '123456', 1),
+('ST006', 'staff6', '123456', 1),
+('ST007', 'staff7', '123456', 1),
+('DE005', 'dentist5', '123456', 1),
+('DE006', 'dentist6', '123456', 1),
+('PA016', 'patient16', '123456', 1),
+('PA017', 'patient17', '123456', 1),
+('PA018', 'patient18', '123456', 1),
+('PA019', 'patient19', '123456', 1),
+('PA020', 'patient20', '123456', 1);
 
-INSERT INTO Staff (account_id, staff_name)
-VALUES
-('ST001', 'Staff 1'),
-('ST002', 'Staff 2'),
-('ST003', 'Staff 3'),
-('ST004', 'Staff 4'),
-('ST005', 'Staff 5'),
-('ST006', 'Staff 6'),
-('ST007', 'Staff 7');
 
-INSERT INTO Admin (account_id, admin_name)
-VALUES
-('AD001', 'Admin 1'),
-('AD002', 'Admin 2'),
-('AD003', 'Admin 3'),
-('AD004', 'Admin 4');
+INSERT INTO Person (person_id, person_name, person_birthday, person_address, person_gender, person_type, account_id)
+Values () --thêm data vào đây dùm em nha // nhớ thêm patient nữa nha
 
-INSERT INTO Dentist (account_id, dentist_name)
+INSERT INTO Dentist (account_id)
 VALUES
-('DE001', 'Dentist 1'),
-('DE002', 'Dentist 2'),
-('DE003', 'Dentist 3'),
-('DE004', 'Dentist 4'),
-('DE005', 'Dentist 5'),
-('DE006', 'Dentist 6');
+('DE001'),
+('DE002'),
+('DE003'),
+('DE004'),
+('DE005'),
+('DE006');
 
 INSERT INTO Drug (drug_id, unit, drug_name, indication, expiration_date, price, drug_stock_quantity)
 VALUES

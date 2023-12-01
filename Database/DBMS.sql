@@ -24,18 +24,21 @@ CREATE TABLE Account
 )
 
 --table Person
-CREATE TABLE PERSON
+CREATE TABLE Person
 (
 	person_id char(5), 
 	person_name nvarchar(30),
 	person_birthday DATE,
 	person_address nvarchar(40),
 	person_gender nvarchar(3),
-	person_type char(2)
+	person_type char(2),
+	account_id char(5)
 
 	CONSTRAINT PK_Person
 	PRIMARY KEY (person_id)
 )
+ALTER TABLE Person
+ADD CONSTRAINT gender_person CHECK (person_gender in ('Nam', N'Nữ'))
 
 --table DENTIST
 CREATE TABLE Dentist
@@ -45,6 +48,48 @@ CREATE TABLE Dentist
 	CONSTRAINT PK_Dentist
 	PRIMARY KEY(dentist_id)
 )
+
+--table PATIENT
+CREATE TABLE Patient
+(
+	patient_id char(5),
+	person_phone char(10) NOT NULL
+
+	CONSTRAINT PK_Patient
+	PRIMARY KEY(patient_id)
+)
+
+--ALTER TABLE Patient
+--ADD CONSTRAINT phone_username_check
+--CHECK (person_phone IN (
+--    SELECT username
+--    FROM Account ac
+--    JOIN Person per ON ac.account_id = per.account_id
+--    WHERE person_phone = Patient.person_phone
+--));
+
+--check constraint of phone number of patient is username
+CREATE FUNCTION is_valid_phone_username(@person_phone VARCHAR(20))
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @username VARCHAR(50);
+
+    SELECT TOP 1 @username = username
+    FROM Account ac
+    JOIN Person per ON ac.account_id = per.account_id
+    WHERE ac.username = @person_phone;
+
+	if(@username is not null)
+		RETURN 1
+	else return 0
+END
+
+ALTER TABLE Patient
+ADD CONSTRAINT phone_username_check
+CHECK (dbo.is_valid_phone_username(person_phone) = 1);
+
+
 
 --table personalAppointment
 CREATE TABLE personalAppointment
@@ -58,16 +103,6 @@ CREATE TABLE personalAppointment
 	CONSTRAINT PK_personalAppointment
 	PRIMARY KEY(personal_appointment_id)
 )
---table PATIENT
-CREATE TABLE Patient
-(
-	patient_id char(5),
-	person_phone char(10) NOT NULL
-
-	CONSTRAINT PK_Patient
-	PRIMARY KEY(patient_id)
-)
-
 
 --table APPOINTMENT
 CREATE TABLE Appointment
@@ -163,16 +198,24 @@ CREATE TABLE Drug
 
 
 --rang buoc
-ALTER TABLE Dentist
+ALTER TABLE Person
 ADD
-	CONSTRAINT FK_Dentist_Account
-	FOREIGN KEY (dentist_id)
+	CONSTRAINT FK_Person_Account
+	FOREIGN KEY (account_id)
 	REFERENCES Account
+
 ALTER TABLE Patient
 ADD
-	CONSTRAINT FK_Patinet_Account
+	CONSTRAINT FK_Patient_Person
 	FOREIGN KEY (patient_id)
-	REFERENCES Account
+	REFERENCES Person
+
+ALTER TABLE Dentist
+ADD
+	CONSTRAINT FK_Dentist_Person
+	FOREIGN KEY (dentist_id)
+	REFERENCES Person
+
 ALTER TABLE personalAppointment
 ADD
 	CONSTRAINT FK_personalAppointment_Dentist
