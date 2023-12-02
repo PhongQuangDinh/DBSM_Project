@@ -34,12 +34,6 @@ as
 select personal_appointment_start_time, personal_appointment_end_time, personal_appointment_date
 from personalAppointment 
 
--- there is a problem that personalAppointmenr'-'Appointment of dentist
-create view Patient_PersonalAppointment
-as
-select personal_appointment_start_time, personal_appointment_end_time, personal_appointment_date
-from personalAppointment perApp
-
 create view Patient_MedicalRecord
 as
 select examination_date, pay_status, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
@@ -117,3 +111,8 @@ as
 select [service_name], cost
 from [Service]
 
+-- there is a problem that personalAppointmenr'-'Appointment of dentist
+create view Patient_PersonalAppointment
+as
+select personal_appointment_start_time, personal_appointment_end_time, personal_appointment_date
+from personalAppointment perApp
