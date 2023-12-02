@@ -1,4 +1,4 @@
-USE QLPHONGKHAMNHAKHOA
+﻿USE QLPHONGKHAMNHAKHOA
 GO
 
 CREATE PROCEDURE insertPersonalAppointment
@@ -8,9 +8,15 @@ CREATE PROCEDURE insertPersonalAppointment
 	@dentistID char(5)
 AS
 BEGIN
-	DECLARE @new_personal_appointment_id char(5);
-    SELECT @new_personal_appointment_id = RIGHT(MAX(personal_appointment_id) + 1, 5)
-    FROM personalAppointment;
+	DECLARE @new_personal_appointment_id char(5); 
+	IF NOT EXISTS (SELECT * FROM personalAppointment)
+	BEGIN
+		SET @new_personal_appointment_id = '00001'
+	END
+	ELSE
+	BEGIN
+    SELECT @new_personal_appointment_id = RIGHT(MAX(personal_appointment_id) + 1, 5) FROM personalAppointment
+	END
 	
 	INSERT INTO personalAppointment(
 		personal_appointment_id,
@@ -59,9 +65,21 @@ CREATE PROCEDURE insertAccount
 	@accountStatus BIT
 AS
 BEGIN
+	IF EXISTS((SELECT * FROM Account WHERE username = @username))
+	BEGIN
+        RAISERROR(N'Tên tài khoản đã tồn tại', 16, 1)
+		RETURN
+    END
 	DECLARE @new_account_id char(5);
+	IF NOT EXISTS (SELECT * FROM Account)
+    BEGIN
+        SET @new_account_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_account_id = RIGHT(MAX(account_id) + 1, 5)
     FROM Account;
+	END
 
 	INSERT INTO Account (
 	account_id,
@@ -85,6 +103,11 @@ CREATE PROCEDURE updateAccount
 	@accountStatus BIT
 AS
 BEGIN
+	IF NOT EXISTS((SELECT * FROM Account WHERE username = @username))
+	BEGIN
+        RAISERROR(N'Tên tài khoản không tồn tại', 16, 1)
+		RETURN
+    END
 	UPDATE Account
 	SET username = @username,
 	password = @password,
@@ -102,8 +125,15 @@ CREATE PROCEDURE insertPerson
 AS
 BEGIN
 	DECLARE @new_person_id char(5);
+	IF NOT EXISTS (SELECT * FROM Person)
+    BEGIN
+        SET @new_person_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_person_id = RIGHT(MAX(person_id) + 1, 5)
     FROM Person;
+	END
 
     INSERT INTO PERSON
     (person_id, person_name, person_birthday, person_address, person_gender, person_type)
@@ -121,6 +151,11 @@ CREATE PROCEDURE updatePerson
 	@person_type char(2)
 AS
 BEGIN
+	IF NOT EXISTS((SELECT * FROM Person WHERE person_id = @person_id))
+	BEGIN
+        RAISERROR(N'ID của người không tồn tại', 16, 1)
+		RETURN
+    END
     UPDATE PERSON
     SET person_name = @person_name,
         person_birthday = @person_birthday,
@@ -133,7 +168,6 @@ END;
 
 go
 CREATE PROCEDURE insertPatient
-	@person_id char(5),
 	@person_name nvarchar(30),
 	@person_birthday DATE,
 	@person_address nvarchar(40),
@@ -143,8 +177,15 @@ CREATE PROCEDURE insertPatient
 AS
 BEGIN
 	DECLARE @new_patient_id char(5);
+	IF NOT EXISTS (SELECT * FROM PATIENT)
+    BEGIN
+        SET @new_patient_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_patient_id = RIGHT(MAX(account_id) + 1, 5)
     FROM Account;
+	END
 
     INSERT INTO PERSON
     (person_id, person_name, person_birthday, person_address, person_gender, person_type)
@@ -167,6 +208,11 @@ CREATE PROCEDURE updatePatient
 	@person_phone char(10)
 AS
 BEGIN
+	IF NOT EXISTS((SELECT * FROM Person WHERE person_id = @person_id))
+	BEGIN
+        RAISERROR(N'ID của bệnh nhân không tồn tại', 16, 1)
+		RETURN
+    END
     UPDATE PERSON
     SET person_name = @person_name,
         person_birthday = @person_birthday,
@@ -190,8 +236,16 @@ CREATE PROCEDURE insertAppointment
 AS
 BEGIN
 	DECLARE @new_appointment_id char(5);
+
+	IF NOT EXISTS (SELECT * FROM Appointment)
+    BEGIN
+        SET @new_appointment_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_appointment_id = RIGHT(MAX(appointment_id) + 1, 5)
     FROM Appointment;
+	END
 
 	INSERT INTO Appointment (
 	patient_id,
@@ -220,8 +274,16 @@ CREATE PROCEDURE insertMedicalRecord
 AS
 BEGIN
 	DECLARE @new_medical_record_id char(5);
+	IF NOT EXISTS (SELECT * FROM MedicalRecord)
+    BEGIN
+        SET @new_medical_record_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_medical_record_id = RIGHT(MAX(medical_record_id) + 1, 5)
     FROM MedicalRecord;
+	END
+
 	INSERT INTO MedicalRecord (
 	medical_record_id,
 	examination_date,
@@ -251,8 +313,16 @@ CREATE PROCEDURE insertBill
 AS
 BEGIN
 	DECLARE @new_bill_id char(5);
+	IF NOT EXISTS (SELECT * FROM Bill)
+    BEGIN
+        SET @new_bill_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_bill_id = RIGHT(MAX(bill_id) + 1, 5)
     FROM Bill;
+	END 
+
 	INSERT INTO Bill (
 	bill_id,
 	service_cost,
@@ -281,8 +351,15 @@ CREATE PROCEDURE insertService
 AS
 BEGIN
 	DECLARE @new_service_id char(5);
+	IF NOT EXISTS (SELECT * FROM Service)
+    BEGIN
+        SET @new_service_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_service_id = RIGHT(MAX(service_id) + 1, 5)
     FROM Service;
+	END
 	INSERT INTO [Service] (
 	service_id,
 	service_name,
@@ -329,8 +406,16 @@ CREATE PROCEDURE insertDrug
 AS
 BEGIN
 	DECLARE @new_drug_id char(5);
+	IF NOT EXISTS (SELECT * FROM DRUG)
+    BEGIN
+        SET @new_drug_id = '00001';
+    END
+    ELSE
+    BEGIN
     SELECT @new_drug_id = RIGHT(MAX(drug_id) + 1, 5)
     FROM Drug;
+	END
+
 	INSERT INTO Drug (
 	drug_id,
 	unit,
