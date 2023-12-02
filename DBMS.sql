@@ -28,6 +28,7 @@ CREATE TABLE Person
 (
 	person_id char(5), 
 	person_name nvarchar(30) NOT NULL,
+	person_phone char(10) NOT NULL,
 	person_birthday DATE,
 	person_address nvarchar(40),
 	person_gender nvarchar(3) NOT NULL,
@@ -53,7 +54,6 @@ CREATE TABLE Dentist
 CREATE TABLE Patient
 (
 	patient_id char(5),
-	patient_phone char(10) NOT NULL
 
 	CONSTRAINT PK_Patient
 	PRIMARY KEY(patient_id)
