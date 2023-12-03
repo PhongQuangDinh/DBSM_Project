@@ -118,6 +118,7 @@ END;
 go
 CREATE PROCEDURE insertPerson
 	@person_name nvarchar(30),
+	@person_phone char(10),
 	@person_birthday DATE,
 	@person_address nvarchar(40),
 	@person_gender nvarchar(3),
@@ -136,15 +137,16 @@ BEGIN
 	END
 
     INSERT INTO PERSON
-    (person_id, person_name, person_birthday, person_address, person_gender, person_type)
+    (person_id, person_name, person_phone ,person_birthday, person_address, person_gender, person_type)
     VALUES
-    (@new_person_id, @person_name, @person_birthday, @person_address, @person_gender, @person_type)
+    (@new_person_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, @person_type)
 END;
 
 go
 CREATE PROCEDURE updatePerson
 	@person_id char(5),
 	@person_name nvarchar(30),
+	@person_phone char(10),
 	@person_birthday DATE,
 	@person_address nvarchar(40),
 	@person_gender nvarchar(3),
@@ -158,6 +160,7 @@ BEGIN
     END
     UPDATE PERSON
     SET person_name = @person_name,
+		person_phone = @person_phone,
         person_birthday = @person_birthday,
         person_address = @person_address,
         person_gender = @person_gender,
@@ -172,7 +175,6 @@ CREATE PROCEDURE insertPatient
 	@person_birthday DATE,
 	@person_address nvarchar(40),
 	@person_gender nvarchar(3),
-	@person_type char(2),
 	@person_phone char(10)
 AS
 BEGIN
@@ -188,13 +190,13 @@ BEGIN
 	END
 
     INSERT INTO PERSON
-    (person_id, person_name, person_birthday, person_address, person_gender, person_type)
+    (person_id, person_name, person_phone, person_birthday, person_address, person_gender, person_type)
     VALUES
-    (@new_patient_id, @person_name, @person_birthday, @person_address, @person_gender, @person_type)
+    (@new_patient_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, 'PA')
 	INSERT INTO PATIENT
-    (patient_id, patient_phone)
+    (patient_id)
     VALUES
-    (@new_patient_id, @person_phone)
+    (@new_patient_id)
 END;
 
 go
@@ -215,14 +217,13 @@ BEGIN
     END
     UPDATE PERSON
     SET person_name = @person_name,
+		person_phone = @person_phone,
         person_birthday = @person_birthday,
         person_address = @person_address,
         person_gender = @person_gender,
         person_type = @person_type
     WHERE person_id = @person_id
-	UPDATE PATIENT
-	SET patient_phone = @person_phone
-	WHERE patient_id = @person_id
+
 END;
 
 go
