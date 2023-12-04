@@ -79,7 +79,8 @@ CREATE TABLE Appointment
 	dentist_id char(5),
 	appointment_id char(5),
 	appointment_start_time time NOT NULL,
-	appointment_end_time time NOT NULL,
+	appointment_status bit NOT NULL,
+	appointment_number int NOT NULL,
 	appointment_date date
 
 	CONSTRAINT PK_Appointment

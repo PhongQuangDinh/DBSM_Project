@@ -232,7 +232,8 @@ CREATE PROCEDURE insertAppointment
 	@dentistID char(5),
 	@appointmentID char(5),
 	@appointmentStartTime time,
-	@appointmentEndTime time,
+	@appointmentStatus bit,
+	@appointmentNumber int,
 	@appointmentDate date
 AS
 BEGIN
@@ -253,7 +254,8 @@ BEGIN
 	dentist_id,
 	appointment_id,
 	appointment_start_time,
-	appointment_end_time,
+	appointment_status,
+	appointment_number,
 	appointment_date
 	)
 	VALUES
@@ -261,7 +263,8 @@ BEGIN
 	@dentistID,
 	@appointmentID,
 	@appointmentStartTime,
-	@appointmentEndTime,
+	@appointmentStatus,
+	@appointmentNumber,
 	@appointmentDate);
 END;
 

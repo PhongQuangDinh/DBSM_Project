@@ -53,19 +53,19 @@ from MedicalRecord mr join Person de on de.person_id= mr.dentist_id join Person 
 
 create view Dentist_Appointment
 as
-select appointment_start_time, appointment_end_time, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
+select appointment_start_time, appointment_status, appointment_number, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
 from Appointment app join Person de on de.person_id= app.dentist_id join Person pa on pa.person_id = app.patient_id
 where app.dentist_id = CURRENT_USER
 
 create view Patient_Appointment
 as
-select appointment_start_time, appointment_end_time, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
+select appointment_start_time, appointment_status, appointment_number, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
 from Appointment app join Person de on de.person_id= app.dentist_id join Person pa on pa.person_id = app.patient_id
 where app.patient_id = CURRENT_USER
 
 create view User_Appointment
 as
-select appointment_start_time, appointment_end_time, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
+select appointment_start_time, appointment_status, appointment_number, appointment_date, de.person_name as DentistName, pa.person_name as PatientName, pa.person_address, pa.person_gender, pa.person_phone as PatientPhone
 from Appointment app join Person de on de.person_id= app.dentist_id join Person pa on pa.person_id = app.patient_id
 
 create view Patient_Bill
