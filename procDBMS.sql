@@ -411,7 +411,6 @@ BEGIN
     ELSE
     BEGIN
 		SET @new_drug_id = 'DR' + RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(drug_id) FROM Drug), 3, 3) AS INT) + 1 AS VARCHAR(3)), 3)
-    FROM Drug;
 	END
 
 	INSERT INTO Drug (
