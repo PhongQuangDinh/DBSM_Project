@@ -25,7 +25,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-    SELECT @new_personal_appointment_id = RIGHT(MAX(personal_appointment_id) + 1, 5) FROM personalAppointment
+		SELECT @new_personal_appointment_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(personal_appointment_id) from personalAppointment), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END
 	
 	INSERT INTO personalAppointment(
@@ -86,10 +86,10 @@ BEGIN
         SET @new_account_id = '00001';
     END
     ELSE
-		BEGIN
-		SELECT @new_account_id = RIGHT(MAX(account_id) + 1, 5)
-		FROM Account;
-		END
+
+    BEGIN
+		SELECT @new_account_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(account_id) from Account), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
+	END
 
 	INSERT INTO Account (
 	account_id,
@@ -139,8 +139,7 @@ BEGIN
     END
     ELSE
     BEGIN
-    SELECT @new_person_id = RIGHT(MAX(person_id) + 1, 5)
-    FROM Person;
+		SELECT @new_person_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(person_id) from Person), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END
 
     INSERT INTO PERSON
@@ -192,8 +191,7 @@ BEGIN
     END
     ELSE
     BEGIN
-    SELECT @new_patient_id = RIGHT(MAX(account_id) + 1, 5)
-    FROM Account;
+    SELECT @new_patient_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(person_id) from Person), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END
 
     INSERT INTO PERSON
@@ -252,7 +250,7 @@ BEGIN
     END
     ELSE
     BEGIN
-    SELECT @new_appointment_id = RIGHT(MAX(appointment_id) + 1, 5)
+		SELECT @new_appointment_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(appointment_id) from Appointment), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
     FROM Appointment;
 	END
 
@@ -291,8 +289,7 @@ BEGIN
     END
     ELSE
     BEGIN
-    SELECT @new_medical_record_id = RIGHT(MAX(medical_record_id) + 1, 5)
-    FROM MedicalRecord;
+	SELECT @new_medical_record_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(medical_record_id) from MedicalRecord), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END
 
 	INSERT INTO MedicalRecord (
@@ -330,8 +327,7 @@ BEGIN
     END
     ELSE
     BEGIN
-    SELECT @new_bill_id = RIGHT(MAX(bill_id) + 1, 5)
-    FROM Bill;
+	SELECT @new_bill_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(bill_id) from Bill), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END 
 
 	INSERT INTO Bill (
@@ -364,12 +360,11 @@ BEGIN
 	DECLARE @new_service_id char(5);
 	IF NOT EXISTS (SELECT * FROM Service)
     BEGIN
-        SET @new_service_id = '00001';
+        SET @new_service_id = 'SV001';
     END
     ELSE
     BEGIN
-    SELECT @new_service_id = RIGHT(MAX(service_id) + 1, 5)
-    FROM Service;
+		SET @new_service_id = 'SV' + RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(service_id) FROM Service), 3, 3) AS INT) + 1 AS VARCHAR(3)), 3)
 	END
 	INSERT INTO [Service] (
 	service_id,
@@ -419,12 +414,11 @@ BEGIN
 	DECLARE @new_drug_id char(5);
 	IF NOT EXISTS (SELECT * FROM DRUG)
     BEGIN
-        SET @new_drug_id = '00001';
+        SET @new_drug_id = 'DR001';
     END
     ELSE
     BEGIN
-    SELECT @new_drug_id = RIGHT(MAX(drug_id) + 1, 5)
-    FROM Drug;
+		SET @new_drug_id = 'DR' + RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(drug_id) FROM Drug), 3, 3) AS INT) + 1 AS VARCHAR(3)), 3)
 	END
 
 	INSERT INTO Drug (
