@@ -84,7 +84,7 @@ CREATE TABLE Appointment
 	appointment_date date
 
 	CONSTRAINT PK_Appointment
-	PRIMARY KEY(patient_id, dentist_id, appointment_id)
+	PRIMARY KEY(appointment_id)
 )
 
 --table MEDICAL_RECORD
@@ -212,7 +212,7 @@ ADD
 	REFERENCES Dentist,
 	
 	CONSTRAINT FK_MedicalRecord_Appointment
-	FOREIGN KEY (patient_id, dentist_id, appointment_id)
+	FOREIGN KEY (appointment_id)
 	REFERENCES Appointment
 
 
