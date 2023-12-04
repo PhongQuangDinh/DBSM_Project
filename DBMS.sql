@@ -75,9 +75,9 @@ CREATE TABLE personalAppointment
 --table APPOINTMENT
 CREATE TABLE Appointment
 (
+	appointment_id char(5),
 	patient_id char(5),
 	dentist_id char(5),
-	appointment_id char(5),
 	appointment_start_time time NOT NULL,
 	appointment_status bit NOT NULL,
 	appointment_number int NOT NULL,

@@ -4,7 +4,7 @@ GO
 --chỉnh sửa tài khoản -- cài view
 --thêm nhân viên trong bệnh viện -- nếu là bác sĩ thì thêm vào bảng bác sĩ
 --thêm người nếu là bệnh nhân thì thêm người đó vào bảng bệnh nhân
---thêm medical record cho bệnh nhân phải có appointment có trc và bệnh nhân đã tồn tại
+--thêm medical record cho bệnh nhân phải có appointment có trc và bệnh nhân đã tồn tại -- sau khi thêm medical record thì appointment status phải được cập nhật
 --không đc thêm appointment mới trùng với appointment đã có sẵn -- kiểm tra thông tin bệnh nhân bác sĩ khi thêm
 --dịch vụ và thuốc phải tồn tại, chưa hết hạn thì mới được thêm và đơn thuốc và danh sách dịch vụ khám cho bệnh nhân
 --bill tính cho phiếu khám của bệnh nhân đã được lập và gí tiền phải trùng khớp với tiền của dịch vụ và tiền tiền thuốc (kiểm tra và tính)
