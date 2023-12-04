@@ -7,11 +7,10 @@ for insert
 as
 	declare @medRec_id char(5) = (select medical_record_id from inserted)
 
-	declare @actualServiceCost float = 
-	(select SUM(sv.cost * svl.service_quantity)
-	from MedicalRecord md join ServiceList svl on svl.medical_record_id = md.medical_record_id
-	join Service sv on sv.service_id = svl.service_id
-	where md.medical_record_id = @medRec_id)
+	declare @actualServiceCost float = (select SUM(sv.cost * svl.service_quantity)
+										from MedicalRecord md join ServiceList svl on svl.medical_record_id = md.medical_record_id
+										join Service sv on sv.service_id = svl.service_id
+										where md.medical_record_id = @medRec_id)
 
 	if @actualServiceCost != (select service_cost from inserted)
 	begin
@@ -20,11 +19,10 @@ as
 		return
 	end
 	
-	declare @actualDrugCost float = 
-	(select SUM(drug.price * pres.drug_quantity)
-	from MedicalRecord md join Prescription pres on pres.medical_record_id = md.medical_record_id
-	join Drug drug on drug.drug_id = pres.drug_id
-	where md.medical_record_id = @medRec_id)
+	declare @actualDrugCost float = (select SUM(drug.price * pres.drug_quantity)
+									from MedicalRecord md join Prescription pres on pres.medical_record_id = md.medical_record_id
+									join Drug drug on drug.drug_id = pres.drug_id
+									where md.medical_record_id = @medRec_id)
 
 	if @actualDrugCost != (select drugs_cost from inserted)
 	begin
@@ -48,11 +46,10 @@ for update
 as
 	declare @medRec_id char(5) = (select medical_record_id from inserted)
 
-	declare @actualServiceCost float = 
-	(select SUM(sv.cost * svl.service_quantity)
-	from MedicalRecord md join ServiceList svl on svl.medical_record_id = md.medical_record_id
-	join Service sv on sv.service_id = svl.service_id
-	where md.medical_record_id = @medRec_id)
+	declare @actualServiceCost float = (select SUM(sv.cost * svl.service_quantity)
+										from MedicalRecord md join ServiceList svl on svl.medical_record_id = md.medical_record_id
+										join Service sv on sv.service_id = svl.service_id
+										where md.medical_record_id = @medRec_id)
 
 	if @actualServiceCost != (select service_cost from inserted)
 	begin
@@ -61,11 +58,10 @@ as
 		return
 	end
 	
-	declare @actualDrugCost float = 
-	(select SUM(drug.price * pres.drug_quantity)
-	from MedicalRecord md join Prescription pres on pres.medical_record_id = md.medical_record_id
-	join Drug drug on drug.drug_id = pres.drug_id
-	where md.medical_record_id = @medRec_id)
+	declare @actualDrugCost float = (select SUM(drug.price * pres.drug_quantity)
+									from MedicalRecord md join Prescription pres on pres.medical_record_id = md.medical_record_id
+									join Drug drug on drug.drug_id = pres.drug_id
+									where md.medical_record_id = @medRec_id)
 
 	if @actualDrugCost != (select drugs_cost from inserted)
 	begin
