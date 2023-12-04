@@ -32,8 +32,8 @@ as
 		rollback
 		return
 	end
-
-	if @actualDrugCost + @actualServiceCost != (select cost_total from inserted)
+	declare @appointCost float = (select appointment_cost from inserted)
+	if @actualDrugCost + @actualServiceCost + @appointCost != (select cost_total from inserted)
 	begin
 		raiserror(N'Tổng chi hóa đơn tính sai',16,1)
 		rollback
@@ -74,7 +74,8 @@ as
 		return
 	end
 
-	if @actualDrugCost + @actualServiceCost != (select cost_total from inserted)
+	declare @appointCost float = (select appointment_cost from inserted)
+	if @actualDrugCost + @actualServiceCost + @appointCost != (select cost_total from inserted)
 	begin
 		raiserror(N'Tổng chi hóa đơn tính sai',16,1)
 		rollback
