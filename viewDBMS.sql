@@ -111,8 +111,20 @@ as
 select [service_name], cost
 from [Service]
 
--- there is a problem that personalAppointmenr'-'Appointment of dentist
-create view Patient_PersonalAppointment
+--tìm tất cả bác sĩ có thời gian rảnh vào ngày h đó
+create or alter proc View_Patient_PersonalAppointment
+					@dateAppointment DATE,
+					@timeAppointment time
 as
-select personal_appointment_start_time, personal_appointment_end_time, personal_appointment_date
-from personalAppointment perApp
+begin
+	select de.person_id, de.person_name, per.personal_appointment_id
+	from Person de join personalAppointment per on de.person_id = per.dentist_id
+	where de.person_type = 'DE' and per.personal_appointment_date = @dateAppointment and 
+			LEFT(CONVERT(varchar(5), @timeAppointment), 5) not in (select LEFT(CONVERT(varchar(5), app1.appointment_start_time), 5)
+									from Appointment app1
+									where app1.dentist_id = de.person_id and @dateAppointment = app1.appointment_date)
+	
+end
+go
+
+exec View_Patient_PersonalAppointment '2023-11-28', '11:00'

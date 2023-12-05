@@ -1,5 +1,15 @@
 ﻿USE QLPHONGKHAMNHAKHOA
 GO
+--thêm tài khoản --cài proc cho status
+--chỉnh sửa tài khoản -- cài view
+--thêm nhân viên trong bệnh viện -- nếu là bác sĩ thì thêm vào bảng bác sĩ
+--thêm người nếu là bệnh nhân thì thêm người đó vào bảng bệnh nhân
+--thêm medical record cho bệnh nhân phải có appointment có trc và bệnh nhân đã tồn tại -- sau khi thêm medical record thì appointment status phải được cập nhật
+--không đc thêm appointment mới trùng với appointment đã có sẵn -- kiểm tra thông tin bệnh nhân bác sĩ khi thêm
+--dịch vụ và thuốc phải tồn tại, chưa hết hạn thì mới được thêm và đơn thuốc và danh sách dịch vụ khám cho bệnh nhân
+--bill tính cho phiếu khám của bệnh nhân đã được lập và gí tiền phải trùng khớp với tiền của dịch vụ và tiền tiền thuốc (kiểm tra và tính)
+--nếu bác sĩ thay đổi thuốc cho bệnh nhân thì bill phải được cập nhật lại
+--tạo function để hiển thị lịch rảnh của bác sĩ vào thời gian mà bệnh nhân đã chọn trước
 
 CREATE PROCEDURE insertPersonalAppointment
 	@personalAppointmentStartTime time,
@@ -61,13 +71,13 @@ END;
 go
 CREATE PROCEDURE insertAccount
 	@username varchar(10),
-	@password varchar(15),
-	@accountStatus BIT
+	@password varchar(15)
 AS
 BEGIN
 	IF EXISTS((SELECT * FROM Account WHERE username = @username))
 	BEGIN
         RAISERROR(N'Tên tài khoản đã tồn tại', 16, 1)
+		ROLLBACK
 		RETURN
     END
 	DECLARE @new_account_id char(5);
@@ -76,6 +86,7 @@ BEGIN
         SET @new_account_id = '00001';
     END
     ELSE
+
     BEGIN
 		SELECT @new_account_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(account_id) from Account), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
 	END
@@ -87,10 +98,7 @@ BEGIN
 	account_status
 	)
 	VALUES
-	(@new_account_id,
-	@username,
-	@password,
-	@accountStatus
+	(@new_account_id, @username, @password, 1
 	);
 END;
 
