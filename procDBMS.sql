@@ -303,15 +303,30 @@ END;
 
 go
 CREATE PROCEDURE insertBill
-	@serviceCost money,
-	@appointmentCost money,
-	@drugsCost money,
-	@costTotal money,
 	@paymentDate date,
 	@patientID char(5),
 	@medicalRecordID char(5)
 AS
 BEGIN
+
+	declare @drugsCost float = 
+	(select SUM(drug.price * pres.drug_quantity)
+	from MedicalRecord md join Prescription pres on pres.medical_record_id = md.medical_record_id
+	join Drug drug on drug.drug_id = pres.drug_id
+	where md.medical_record_id = @medicalRecordID)
+
+	declare @serviceCost float = 
+	(select SUM(sv.cost * svl.service_quantity)
+	from MedicalRecord md join ServiceList svl on svl.medical_record_id = md.medical_record_id
+	join Service sv on sv.service_id = svl.service_id
+	where md.medical_record_id = @medicalRecordID)
+
+	declare @appointmentCost float
+	set @appointmentCost = 50000
+
+	declare @costTotal float
+	set @costTotal = @appointmentCost + @drugsCost + @serviceCost
+
 	DECLARE @new_bill_id char(5);
 	IF NOT EXISTS (SELECT * FROM Bill)
     BEGIN
@@ -467,3 +482,19 @@ BEGIN
 	DELETE FROM Drug
 	WHERE drug_id = @drugID;
 END;
+
+
+go
+CREATE PROCEDURE listDentist
+	@date date,
+	@time time
+AS
+BEGIN
+	declare @tmp time
+	set @tmp = DATEADD(minute, -30, @time)
+	select pa.dentist_id from personalAppointment pa join Appointment a on pa.dentist_id = a.dentist_id
+	where personal_appointment_date = @date and personal_appointment_start_time <= @time and personal_appointment_end_time >= @tmp
+	and @time != a.appointment_start_time
+END;
+
+exec listDentist @date = '2023-11-28', @time = '10:00:00'
