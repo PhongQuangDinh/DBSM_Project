@@ -8,7 +8,7 @@ GO
 --không đc thêm appointment mới trùng với appointment đã có sẵn -- kiểm tra thông tin bệnh nhân bác sĩ khi thêm
 --dịch vụ và thuốc phải tồn tại, chưa hết hạn thì mới được thêm và đơn thuốc và danh sách dịch vụ khám cho bệnh nhân
 --bill tính cho phiếu khám của bệnh nhân đã được lập và gí tiền phải trùng khớp với tiền của dịch vụ và tiền tiền thuốc (kiểm tra và tính)
---nếu bác sĩ thay đổi thuốc cho bệnh nhân thì bill phải được cập nhật lại
+----nếu bác sĩ thay đổi thuốc cho bệnh nhân thì bill phải được cập nhật lại
 --tạo function để hiển thị lịch rảnh của bác sĩ vào thời gian mà bệnh nhân đã chọn trước
 
 CREATE PROCEDURE insertPersonalAppointment
@@ -242,6 +242,10 @@ CREATE PROCEDURE insertAppointment
 	@appointmentDate date
 AS
 BEGIN
+	IF NOT EXISTS (SELECT * FROM Patient WHERE patient_id = @patientID)
+		RETURN
+	IF NOT EXISTS (SELECT * FROM Dentist WHERE dentist_id = @dentistID)
+		RETURN
 	DECLARE @new_appointment_id char(5);
 
 	IF NOT EXISTS (SELECT * FROM Appointment)
@@ -282,6 +286,8 @@ CREATE PROCEDURE insertMedicalRecord
 	@appointmentID char(5)
 AS
 BEGIN
+	IF NOT EXISTS (SELECT * FROM Appointment WHERE appointment_id = @appointmentID)
+		RETURN
 	DECLARE @new_medical_record_id char(5);
 	IF NOT EXISTS (SELECT * FROM MedicalRecord)
     BEGIN
@@ -307,6 +313,10 @@ BEGIN
 	@patientID,
 	@dentistID,
 	@appointmentID);
+
+	UPDATE Appointment
+	SET appointment_status = 1
+	WHERE appointment_id = @appointmentID
 END;
 
 go
@@ -505,4 +515,89 @@ BEGIN
 	and @time != a.appointment_start_time
 END;
 
-exec listDentist @date = '2023-11-28', @time = '10:00:00'
+--exec listDentist @date = '2023-11-28', @time = '10:00:00'
+
+go
+CREATE PROCEDURE AddServiceList(
+   @medical_record_id char(5),
+   @service_id char(5),
+   @service_quantity int
+)
+AS
+BEGIN
+   IF NOT EXISTS (SELECT *
+   FROM Service
+   WHERE service_id = @service_id)
+   BEGIN
+      RAISERROR('Dịch vụ không tồn tại', 16, 1);
+      RETURN;
+   END
+
+   INSERT INTO ServiceList
+   (
+      medical_record_id,
+      service_id,
+      service_quantity
+   )
+   VALUES
+   (
+      @medical_record_id,
+      @service_id,
+      @service_quantity
+   );
+END;
+
+go
+CREATE or alter PROCEDURE AddPrescription(
+  @medical_record_id char(5),
+  @drug_id char(5),
+  @drug_quantity int
+)
+AS
+BEGIN
+  IF NOT EXISTS (SELECT * FROM Drug WHERE drug_id = @drug_id)
+  BEGIN
+    RAISERROR('Thuốc không tồn tại.', 16, 1);
+    RETURN;
+  END
+
+  -- Check if expiry date is valid
+  DECLARE @expiryDate date;
+  SELECT @expiryDate = expiration_date FROM Drug WHERE drug_id = @drug_id;
+  IF @expiryDate < GETDATE()
+  BEGIN
+    RAISERROR('Thuốc đã hết hạn.', 16, 1, @drug_id);
+    RETURN;
+  END
+
+  -- Insert prescription and quantity
+  INSERT INTO Prescription (
+    medical_record_id,
+    drug_id,
+    drug_quantity
+  )
+  VALUES (
+    @medical_record_id,
+    @drug_id,
+    @drug_quantity
+  );
+END;
+
+
+exec insertMedicalRecord
+	@examinationDate = '2023-12-05',
+	@payStatus = 0, -- 1: Paid, 0: Unpaid
+	@patientID = '00018',
+	@dentistID = '00012',
+	@appointmentID = '00001'
+
+exec AddServiceList
+	@medical_record_id = '00001',
+	@service_id = 'SV300',
+	@service_quantity = 2;
+
+
+exec AddPrescription
+	@medical_record_id = '00001',
+	@drug_id = 'DR001',
+	@drug_quantity = 2;
