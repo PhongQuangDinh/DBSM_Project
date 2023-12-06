@@ -1,5 +1,4 @@
-﻿
-INSERT INTO MedicalRecord (medical_record_id, examination_date, pay_status,patient_id, dentist_id, appointment_id)
+﻿INSERT INTO MedicalRecord (medical_record_id, examination_date, pay_status,patient_id, dentist_id, appointment_id)
 VALUES
 ('MD001','2023-11-28',1,'00018','00012','00001'),
 ('MD002','2023-11-28',1,'00019','00012','00002'),
