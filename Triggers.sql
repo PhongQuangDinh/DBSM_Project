@@ -1,5 +1,47 @@
 use QLPHONGKHAMNHAKHOA
 go
+--trigger kiểm tra update số điện thoại của bệnh nhân
+create or alter trigger TR_changePhoneNumber
+on Person
+for update
+as
+	begin
+		if ((select person_type from inserted) = 'PA')
+		begin
+			declare @newPhoneNumber char(10)
+			select @newPhoneNumber = person_phone
+			from inserted
+
+			if(@newPhoneNumber != (select acc.username from Account acc join inserted ins on acc.account_id = ins.account_id))
+			begin
+				raiserror(N'Số điện thoại cập nhật không hợp lệ', 16, 1)
+				rollback
+				return
+			end
+		end
+	end
+go
+
+create or alter trigger TR_insertPatient
+on Person
+for insert
+as
+	begin
+		if ((select person_type from inserted) = 'PA')
+		begin
+			declare @PhoneNumber char(10)
+			select @PhoneNumber = person_phone
+			from inserted
+
+			if(@PhoneNumber != (select acc.username from Account acc join inserted ins on acc.account_id = ins.account_id))
+			begin
+				raiserror(N'Số điện thoại thêm vào không hợp lệ', 16, 1)
+				rollback
+				return
+			end
+		end
+	end
+go
 
 create or alter trigger TR_cost1
 on BILL

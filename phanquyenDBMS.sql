@@ -55,3 +55,6 @@ CREATE USER [00001] FOR LOGIN AD
 
 -- thêm user vào role NhanVien
 sp_addrolemember 'Admin', '00001'
+
+grant select, insert, update on Dentist_MedicalRecord to Dentist
+grant select, insert, update on Dentist_or_Patient_Person to Patient

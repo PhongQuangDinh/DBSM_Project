@@ -11,7 +11,7 @@ GO
 ----nếu bác sĩ thay đổi thuốc cho bệnh nhân thì bill phải được cập nhật lại
 --tạo function để hiển thị lịch rảnh của bác sĩ vào thời gian mà bệnh nhân đã chọn trước
 
-CREATE PROCEDURE insertPersonalAppointment
+CREATE or alter PROCEDURE insertPersonalAppointment
 	@personalAppointmentStartTime time,
 	@personalAppointmentEndTime time,
 	@personalAppointmentDate date,
@@ -43,7 +43,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE deletePersonalAppointment
+CREATE or alter PROCEDURE deletePersonalAppointment
 	@personalAppointmentID char(5)
 AS
 BEGIN
@@ -52,7 +52,7 @@ WHERE personal_appointment_id = @personalAppointmentID;
 END;
 
 go
-CREATE PROCEDURE updatePersonalAppointment
+CREATE or alter PROCEDURE updatePersonalAppointment
 	@personalAppointmentID char(5),
 	@personalAppointmentStartTime time,
 	@personalAppointmentEndTime time,
@@ -123,7 +123,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertPerson
+CREATE or alter PROCEDURE insertPerson
 	@person_name nvarchar(30),
 	@person_phone char(10),
 	@person_birthday DATE,
@@ -149,7 +149,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE updatePerson
+CREATE or alter PROCEDURE updatePerson
 	@person_id char(5),
 	@person_name nvarchar(30),
 	@person_phone char(10),
@@ -176,7 +176,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertPatient
+CREATE or alter PROCEDURE insertPatient
 	@person_name nvarchar(30),
 	@person_birthday DATE,
 	@person_address nvarchar(40),
@@ -205,7 +205,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE updatePatient
+CREATE or alter PROCEDURE updatePatient
 	@person_id char(5),
 	@person_name nvarchar(30),
 	@person_birthday DATE,
@@ -232,20 +232,22 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertAppointment
+CREATE or alter PROCEDURE insertAppointment
 	@patientID char(5),
 	@dentistID char(5),
-	@appointmentID char(5),
 	@appointmentStartTime time,
-	@appointmentStatus bit,
-	@appointmentNumber int,
 	@appointmentDate date
 AS
 BEGIN
 	IF NOT EXISTS (SELECT * FROM Patient WHERE patient_id = @patientID)
+		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
+		rollback
 		RETURN
 	IF NOT EXISTS (SELECT * FROM Dentist WHERE dentist_id = @dentistID)
+		raiserror(N'Bác sĩ không tồn tại', 16, 1)
+		rollback
 		RETURN
+
 	DECLARE @new_appointment_id char(5);
 
 	IF NOT EXISTS (SELECT * FROM Appointment)
@@ -270,15 +272,15 @@ BEGIN
 	VALUES
 	(@new_appointment_id,
 	@dentistID,
-	@appointmentID,
+	@new_appointment_id,
 	@appointmentStartTime,
-	@appointmentStatus,
-	@appointmentNumber,
+	0,
+	DATEDIFF(MINUTE, '09:00:00', @appointmentStartTime)/30 + 1,
 	@appointmentDate);
 END;
 
 go
-CREATE PROCEDURE insertMedicalRecord
+CREATE or alter PROCEDURE insertMedicalRecord
 	@examinationDate date,
 	@payStatus bit,
 	@patientID char(5),
@@ -320,7 +322,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertBill
+CREATE or alter PROCEDURE insertBill
 	@paymentDate date,
 	@patientID char(5),
 	@medicalRecordID char(5)
@@ -377,7 +379,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertService
+CREATE or alter PROCEDURE insertService
 	@serviceName nvarchar(30),
 	@cost money
 AS
@@ -425,7 +427,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertDrug
+CREATE or alter PROCEDURE insertDrug
 (
 	@unit varchar(5),
 	@drugName nvarchar(30),
@@ -468,7 +470,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE updateDrug
+CREATE or alter PROCEDURE updateDrug
 (
 	@drugID char(5),
 	@unit varchar(5),
@@ -491,7 +493,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE deleteDrug
+CREATE or alter PROCEDURE deleteDrug
 (
 	@drugID char(5)
 )
@@ -503,7 +505,7 @@ END;
 
 
 go
-CREATE PROCEDURE listDentist
+CREATE or alter PROCEDURE listDentist
 	@date date,
 	@time time
 AS
@@ -518,7 +520,7 @@ END;
 --exec listDentist @date = '2023-11-28', @time = '10:00:00'
 
 go
-CREATE PROCEDURE AddServiceList(
+CREATE or alter PROCEDURE AddServiceList(
    @medical_record_id char(5),
    @service_id char(5),
    @service_quantity int
