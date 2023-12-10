@@ -531,7 +531,7 @@ BEGIN
    FROM Service
    WHERE service_id = @service_id)
    BEGIN
-      RAISERROR('Dịch vụ không tồn tại', 16, 1);
+      RAISERROR(N'Dịch vụ không tồn tại', 16, 1);
       RETURN;
    END
 
@@ -559,10 +559,15 @@ AS
 BEGIN
   IF NOT EXISTS (SELECT * FROM Drug WHERE drug_id = @drug_id)
   BEGIN
-    RAISERROR('Thuốc không tồn tại.', 16, 1);
+    RAISERROR(N'Thuốc không tồn tại.', 16, 1);
     RETURN;
   END
 
+  if (@drug_quantity<(select drug_stock_quantity from Drug where drug_id = @drug_id))
+  begin
+    RAISERROR(N'Thuốc trong kho không đủ cấp', 16, 1);
+    RETURN;
+  end
   -- Check if expiry date is valid
   DECLARE @expiryDate date;
   SELECT @expiryDate = expiration_date FROM Drug WHERE drug_id = @drug_id;
