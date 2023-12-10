@@ -750,3 +750,10 @@ VALUES
 ('DR014','00039',1),
 ('DR012','00039',1),
 ('DR009','00039',1)
+
+UPDATE Prescription
+SET drug_price = (
+    SELECT price
+    FROM Drug
+    WHERE drug_id = Prescription.drug_id
+) * Prescription.drug_quantity;
