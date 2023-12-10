@@ -270,7 +270,7 @@ BEGIN
 	appointment_date
 	)
 	VALUES
-	(@new_appointment_id,
+	(@patientID,
 	@dentistID,
 	@new_appointment_id,
 	@appointmentStartTime,
