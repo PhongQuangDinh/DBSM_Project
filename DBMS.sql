@@ -144,7 +144,8 @@ CREATE TABLE Prescription
 (
 	drug_id char(5),
 	medical_record_id char(5) NOT NULL,
-	drug_quantity int NOT NULL Check (drug_quantity>=1)
+	drug_quantity int NOT NULL Check (drug_quantity>=1),
+	drug_price float
 
 	CONSTRAINT PK_Prescription
 	PRIMARY KEY(medical_record_id, drug_id)
