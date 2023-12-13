@@ -233,14 +233,13 @@ END;
 
 go
 CREATE or alter PROCEDURE insertAppointment
-	@patientID char(5),
+	@patientPhone char(10),
 	@dentistID char(5),
 	@appointmentStartTime time,
 	@appointmentDate date
 AS
 BEGIN
-	IF NOT EXISTS (SELECT * FROM Patient WHERE patient_id = @patientID)
-	BEGIN
+	IF NOT EXISTS (SELECT * FROM Patient pa join Person pe on pe.person_id = pa.patient_id WHERE pe.person_phone = @patientPhone)
 		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
 		RETURN
 	END
@@ -260,6 +259,9 @@ BEGIN
 		SELECT @new_appointment_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(appointment_id) from Appointment), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
     FROM Appointment;
 	END
+
+	declare @patientID char(5)
+	SELECT @patientID = pe.person_id FROM Person pe WHERE pe.person_phone = @patientPhone
 
 	INSERT INTO Appointment (
 	patient_id,
