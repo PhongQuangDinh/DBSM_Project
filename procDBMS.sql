@@ -241,13 +241,13 @@ AS
 BEGIN
 	IF NOT EXISTS (SELECT * FROM Patient pa join Person pe on pe.person_id = pa.patient_id WHERE pe.person_phone = @patientPhone)
 		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
-		rollback
 		RETURN
+	END
 	IF NOT EXISTS (SELECT * FROM Dentist WHERE dentist_id = @dentistID)
+	BEGIN
 		raiserror(N'Bác sĩ không tồn tại', 16, 1)
-		rollback
 		RETURN
-
+	END
 	DECLARE @new_appointment_id char(5);
 
 	IF NOT EXISTS (SELECT * FROM Appointment)
