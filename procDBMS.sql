@@ -100,10 +100,10 @@ BEGIN
 	VALUES
 	(@new_account_id, @username, @password, 1
 	);
-END;
+END; 
 
 go
-CREATE PROCEDURE updateAccount
+CREATE or alter PROCEDURE updateAccount
 	@accountId char(5),
 	@username varchar(10),
 	@password varchar(15),
