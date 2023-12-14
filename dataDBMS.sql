@@ -435,6 +435,7 @@ VALUES
 
 Insert into Appointment(appointment_id, patient_id, dentist_id, appointment_start_time, appointment_status, appointment_number, appointment_date)
 values
+('00050', '00021', '00016', '09:00:00', 1, DATEDIFF(MINUTE, '09:00:00', '09:00:00')/30 + 1, '2023-11-29'),
 ('00001', '00018', '00012', '09:00:00', 1, DATEDIFF(MINUTE, '09:00:00', '09:00:00')/30 + 1, '2023-11-28'),
 ('00002', '00019', '00012', '09:30:00', 1, DATEDIFF(MINUTE, '09:00:00', '09:30:00')/30 + 1, '2023-11-28'),
 ('00003', '00020', '00012', '10:00:00', 1, DATEDIFF(MINUTE, '09:00:00', '10:00:00')/30 + 1, '2023-11-28'),
@@ -527,7 +528,6 @@ VALUES
 ('00038','2023-12-01',1,'00029','00012','00038'),
 ('00039','2023-12-01',1,'00030','00012','00039'),
 ('00040','2023-12-02',1,'00020','00015', '00049')
-
 INSERT INTO ServiceList (service_id, medical_record_id, service_quantity)
 VALUES
 ('SV001','00001',1),
