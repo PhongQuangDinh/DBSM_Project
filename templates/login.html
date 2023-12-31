@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../static/globals.css" />
+    <link rel="stylesheet" href="../static/login.css">
+  </head>
+  <body>
+    <div class="ng-nhp-ti-khon-nhn">
+      <div class="div">
+        <div class="overlap">
+          <div class="overlap-group">
+            <img class="line" src="img/line-3.svg" /> <img class="line" src="img/line-4.svg" />
+          </div>
+          <div class="group">
+            <div class="overlap-group-2">
+              <div class="overlap-2">
+                <div class="text-wrapper">Nha khoa</div>
+                <p class="p">Cái răng cái tóc là gốc con người</p>
+              </div>
+              <img class="clinic" src="../static/img/logo.png" />
+            </div>
+          </div>
+          <!-- <div class="div-wrapper">
+            <div class="text-wrapper-2">Nhập tên đăng nhập</div>
+          </div> -->
+          <!-- <div class="text-wrapper-3">Tên đăng nhập</div>
+          <div class="overlap-3">
+            <div class="text-wrapper-4">Nhập mật khẩu</div>
+            <img class="hide" src="../static/img/hide 2.png" />
+          </div> -->
+          <!-- <div class="text-wrapper-5">Mật khẩu</div> -->
+          <form method="POST" action="/login">
+            <label class="text-wrapper-3" for="username">Tên đăng nhập</label>
+            <input class="div-wrapper" type="text" name="username" required>
+            <br>
+            <label class="text-wrapper-5"  for="password">Mật khẩu</label>
+            <input class="overlap-3" type="password" name="password" required>
+            <br>
+            <div class="overlap-wrapper">
+              <h5> {{error}} </h5> <!-- DEBUG -->
+              <!-- <div class="overlap-4"><input class="text-wrapper-8" type="submit" value="Signup"></input></div> -->
+              <div><input class="overlap-4" type="submit" value="Login"></div>
+            </div>
+          </form>
+          <p class="b-n-ch-a-l-th-nh-vi">
+            <span class="span">Bạn chưa là thành viên?</span> 
+            <a href="/signup" class="text-wrapper-7"> Hãy đăng ký ngay</a>
+          </p>
+          <div class="text-wrapper-9">Đăng nhập</div>
+        </div>
+        <div class="overlap-5">
+          <div class="overlap-5">
+            <img class="img" src="img/line-1.svg" />
+            <img class="rectangle" src="../static/img/Rectangle 1.png" />
+            <div class="text-wrapper-10">Đăng nhập tài khoản</div>
+            <img class="clinic-2" src="../static/img/clinic.png" />
+          </div>
+          <img class="arrow-right" src="../static/img/arrow-right 2.png" />
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
