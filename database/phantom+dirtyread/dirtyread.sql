@@ -1,7 +1,6 @@
 ﻿go
 CREATE or alter PROCEDURE updateAccount
 	@username varchar(10),
-	@password varchar(15),
 	@accountStatus BIT
 AS
 BEGIN TRAN
@@ -12,9 +11,16 @@ BEGIN TRAN
 		ROLLBACK TRAN
 		RETURN
     END
+	DECLARE @status BIT
+	SET @status = (SELECT account_status from Account)
+	IF @status = 1
+	BEGIN
+        RAISERROR(N'Tài khoản đã khóa', 16, 1)
+		ROLLBACK TRAN
+		RETURN
+    END
 	UPDATE Account
 	SET
-		password = @password,
 		account_status = @accountStatus
 	WHERE username = @username;
 	WAITFOR DELAY '0:0:05'
@@ -39,18 +45,6 @@ AS
 --SET TRAN ISOLATION LEVEL READ UNCOMMITTED
 BEGIN TRAN
 	BEGIN TRY
-	IF EXISTS (SELECT * FROM Account WHERE account_id = @patientID AND account_status = 0)
-	BEGIN
-			PRINT N'TÀI KHOẢN BỆNH NHÂN ĐÃ BỊ KHÓA'
-			ROLLBACK TRAN
-			RETURN 
-	END
-	IF EXISTS (SELECT * FROM Account WHERE account_id = @dentistID AND account_status = 0)
-	BEGIN
-			PRINT N'TÀI KHOẢN NHA SĨ ĐÃ BỊ KHÓA'
-			ROLLBACK TRAN
-			RETURN 
-	END
 	IF NOT EXISTS (SELECT * FROM Account WHERE account_id = @patientID)
 	BEGIN
 		PRINT  N'Bệnh nhân không tồn tại'
@@ -62,6 +56,18 @@ BEGIN TRAN
 		PRINT  N'Bác sĩ không tồn tại'
 		rollback tran
 		RETURN
+	END
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @patientID AND account_status = 0)
+	BEGIN
+			PRINT N'TÀI KHOẢN BỆNH NHÂN ĐÃ BỊ KHÓA'
+			ROLLBACK TRAN
+			RETURN 
+	END
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @dentistID AND account_status = 0)
+	BEGIN
+			PRINT N'TÀI KHOẢN NHA SĨ ĐÃ BỊ KHÓA'
+			ROLLBACK TRAN
+			RETURN 
 	END
 	DECLARE @new_appointment_id char(5);
 	IF NOT EXISTS (SELECT * FROM Appointment)
@@ -100,7 +106,7 @@ COMMIT TRAN
 
 EXEC updateAccount 'dentist1','123456', 1
 EXEC insertAppointment '00033', '00012', '16:30:00', '2023-10-01'
-SELECT * FROM	Account WHERE account_id = '00012'
+SELECT * FROM Account WHERE account_id = '00012'
 SELECT * FROM Appointment WHERE appointment_id = '00050'
 
 

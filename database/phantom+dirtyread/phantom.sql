@@ -1,5 +1,5 @@
 ﻿go
-CREATE or alter PROCEDURE updateDrug
+CREATE or alter PROCEDURE sp_updateDrug
 (
 	@drugID char(5),
 	@unit varchar(5),
@@ -14,6 +14,12 @@ AS
 SET TRAN ISOLATION LEVEL SERIALIZABLE
 BEGIN TRAN
 	BEGIN TRY
+	IF NOT EXISTS (SELECT * FROM Drug WHERE drug_id = @drugID)
+	BEGIN
+		RAISERROR('Thuốc không tồn tại.', 16, 1);
+		ROLLBACK TRAN
+		RETURN;
+	END
 	WAITFOR DELAY '0:0:05'
 	UPDATE Drug
 	SET unit = @unit,
@@ -59,6 +65,11 @@ BEGIN TRAN
     RETURN;
   END
 
+  IF NOT EXISTS (SELECT * FROM MedicalRecord WHERE medical_record_id = @medical_record_id)
+  BEGIN
+    RAISERROR(N'Record không tồn tại.', 16, 1);
+    RETURN;
+  END
   -- Check if expiry date is valid
   DECLARE @expiryDate date;
   SELECT @expiryDate = expiration_date FROM Drug WHERE drug_id = @drug_id;
@@ -69,6 +80,12 @@ BEGIN TRAN
     RETURN;
   END
   
+  if(@drug_quantity > (select drug_stock_quantity from Drug where drug_id = @drug_id))
+  begin
+	raiserror(N'Số lượng thuốc không đủ cấp', 16, 1)
+	rollback
+	return
+  end
   DECLARE @drug_price float
   SET @drug_price = (
     SELECT price
@@ -88,6 +105,9 @@ BEGIN TRAN
     @drug_quantity,
 	@drug_price
   );
+  update Drug
+  set drug_stock_quantity = drug_stock_quantity - @drug_quantity
+  where drug_id = @drug_id
   END TRY
   BEGIN CATCH
 		PRINT N'LỖI HỆ THỐNG'
