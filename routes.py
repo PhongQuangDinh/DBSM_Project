@@ -497,23 +497,26 @@ def adddrug():
     if request.method == 'POST':
         medicine_name = request.form.get('medicineName')
         stock = request.form.get('stock')
+        unit = request.form.get('unit')
         price = request.form.get('price')
         expiry_date = request.form.get('expiryDate')
         contraindications = request.form.get('contraindications')
-        cursor.execute(f"EXEC insertDrug ?, ?, ?, ?, ?", medicine_name, contraindications, expiry_date, price, stock)
+        cursor.execute(f"EXEC insertDrug ?, ?, ?, ?, ?, ?",unit, medicine_name, contraindications, expiry_date, price, stock)
     return render_template('adddrug.html')
 
 @app.route('/updatedrug', methods = ['POST','GET'])
 def updatedrug():
     drug_id = request.args.get('get_drug_id')
+    print(drug_id)
     if request.method == 'POST':
         medicine_name = request.form.get('medicineName')
         stock = request.form.get('stock')
+        unit = request.form.get('unit')
         price = request.form.get('price')
         expiry_date = request.form.get('expiryDate')
         contraindications = request.form.get('contraindications')
-        cursor.execute(f"EXEC updateDrug ?, ?, ?, ?, ?, ?",drug_id, medicine_name, contraindications, expiry_date, price, stock)
-    return render_template('updatedrug.html')
+        cursor.execute(f"EXEC updateDrug ?,?, ?, ?, ?, ?, ?",drug_id,unit, medicine_name, contraindications, expiry_date, price, stock)
+    return render_template('updatedrug.html',drug_id = drug_id)
 
 @app.route('/prescription', methods = ['POST','GET'])
 def prescription():

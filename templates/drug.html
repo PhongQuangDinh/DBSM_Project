@@ -85,6 +85,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Unit</th>
                         <th>Indication</th>
                         <th>Expiration</th>
                         <th>Price</th>
@@ -98,10 +99,11 @@
                         <tr>
                             <td>{{ drug.drug_id }}</td>
                             <td>{{ drug.drug_name }}</td>
+                            <td>{{ drug.unit }}</td>
                             <td>{{ drug.indication }}</td>
                             <td>{{ drug.expiration_date }}</td>
-                            <td>{{ drug.drug_price }}</td>
-                            <td>{{ drug.drug_quantity }}</td>
+                            <td>{{ drug.price }}</td>
+                            <td>{{ drug.drug_stock_quantity}}</td>
 
                             <!-- this is art -->
                             <td><div class="div-33">

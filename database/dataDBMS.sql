@@ -86,37 +86,6 @@ Values
 ('00036', N'Đỗ Thị Quỳnh', '0123456772', '1993-03-07', N'Số 75, Phố Hai Bà Trưng, Hà Nội', N'Nữ', 'PA', '00036'),
 ('00037', N'Nguyễn Văn Sơn', '0987654312', '1994-09-29', N'Số 80, Phố Bà Triệu, Hà Nội', N'Nam', 'PA', '00037');
 
-INSERT INTO Patient (patient_id)
-VALUES
-    ('00018'),
-    ('00019'),
-    ('00020'),
-    ('00021'),
-    ('00022'),
-    ('00023'),
-    ('00024'),
-    ('00025'),
-    ('00026'),
-    ('00027'),
-    ('00028'),
-    ('00029'),
-    ('00030'),
-    ('00031'),
-    ('00032'),
-    ('00033'),
-    ('00034'),
-    ('00035'),
-    ('00036'),
-    ('00037');
-
-INSERT INTO Dentist (dentist_id)
-VALUES
-('00012'),
-('00013'),
-('00014'),
-('00015'),
-('00016'),
-('00017');
 
 INSERT INTO Drug (drug_id, unit, drug_name, indication, expiration_date, price, drug_stock_quantity)
 VALUES
@@ -160,14 +129,6 @@ VALUES
 ('SV018', N'Làm răng giả tháo lắp', 1000000),
 ('SV019', N'Làm răng giả cố định', 2000000);
 
-INSERT INTO Appointment(patient_iD,
-	dentist_id,
-	appointment_id,
-	appointment_start_time ,
-	appointment_end_time ,
-	appointment_date)
-VALUES
-('00037','00012','A0001','09:00:00','09:30:00','2023-11-28');
 
 INSERT INTO PersonalAppointment(personal_appointment_id, personal_appointment_start_time, personal_appointment_end_time, personal_appointment_date, dentist_id)
 VALUES

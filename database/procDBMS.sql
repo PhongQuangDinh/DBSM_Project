@@ -239,6 +239,7 @@ CREATE or alter PROCEDURE insertAppointment
 AS
 BEGIN
 	IF NOT EXISTS (SELECT * FROM Person WHERE person_phone = @patientPhone)
+	BEGIN
 		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
 		RETURN
 	END
