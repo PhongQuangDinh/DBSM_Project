@@ -18,6 +18,13 @@ CREATE or alter PROCEDURE insertPersonalAppointment
 	@dentistID char(5)
 AS
 BEGIN
+
+	IF NOT EXISTS (SELECT 1 FROM Person where @dentistID = person_id and person_type = 'DE')
+	BEGIN
+		raiserror(N'Không phải là bác sĩ', 16, 1);
+		return
+	END
+
 	DECLARE @new_personal_appointment_id char(5); 
 	IF NOT EXISTS (SELECT * FROM personalAppointment)
 	BEGIN
@@ -67,9 +74,9 @@ BEGIN
 	dentist_id = @dentistID
 	WHERE personal_appointment_id = @personalAppointmentID;
 END;
-
 go
-CREATE PROCEDURE insertAccount
+ 
+CREATE or alter PROCEDURE insertAccount
 	@username varchar(10),
 	@password varchar(15)
 AS
@@ -182,56 +189,56 @@ BEGIN
 END;
 
 go
-CREATE or alter PROCEDURE insertPatient
-	@person_name nvarchar(30),
-	@person_birthday DATE,
-	@person_address nvarchar(40),
-	@person_gender nvarchar(3),
-	@person_phone char(10)
-AS
-BEGIN
-	DECLARE @new_patient_id char(5);
-	IF NOT EXISTS (SELECT * FROM PATIENT)
-    BEGIN
-        SET @new_patient_id = '00001';
-    END
-    ELSE
-    BEGIN
-    SELECT @new_patient_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(person_id) from Person), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
-	END
+--CREATE or alter PROCEDURE insertPatient
+--	@person_name nvarchar(30),
+--	@person_birthday DATE,
+--	@person_address nvarchar(40),
+--	@person_gender nvarchar(3),
+--	@person_phone char(10)
+--AS
+--BEGIN
+--	DECLARE @new_patient_id char(5);
+--	IF NOT EXISTS (SELECT * FROM PATIENT)
+--    BEGIN
+--        SET @new_patient_id = '00001';
+--    END
+--    ELSE
+--    BEGIN
+--    SELECT @new_patient_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(person_id) from Person), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
+--	END
 
-    INSERT INTO PERSON
-    (person_id, person_name, person_phone, person_birthday, person_address, person_gender, person_type)
-    VALUES
-    (@new_patient_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, 'PA')
-END;
+--    INSERT INTO PERSON
+--    (person_id, person_name, person_phone, person_birthday, person_address, person_gender, person_type)
+--    VALUES
+--    (@new_patient_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, 'PA')
+--END;
 
-go
-CREATE or alter PROCEDURE updatePatient
-	@person_id char(5),
-	@person_name nvarchar(30),
-	@person_birthday DATE,
-	@person_address nvarchar(40),
-	@person_gender nvarchar(3),
-	@person_type char(2),
-	@person_phone char(10)
-AS
-BEGIN
-	IF NOT EXISTS((SELECT * FROM Person WHERE person_id = @person_id))
-	BEGIN
-        RAISERROR(N'ID của bệnh nhân không tồn tại', 16, 1)
-		RETURN
-    END
-    UPDATE PERSON
-    SET person_name = @person_name,
-		person_phone = @person_phone,
-        person_birthday = @person_birthday,
-        person_address = @person_address,
-        person_gender = @person_gender,
-        person_type = @person_type
-    WHERE person_id = @person_id
+--go
+--CREATE or alter PROCEDURE updatePatient
+--	@person_id char(5),
+--	@person_name nvarchar(30),
+--	@person_birthday DATE,
+--	@person_address nvarchar(40),
+--	@person_gender nvarchar(3),
+--	@person_type char(2),
+--	@person_phone char(10)
+--AS
+--BEGIN
+--	IF NOT EXISTS((SELECT * FROM Person WHERE person_id = @person_id))
+--	BEGIN
+--        RAISERROR(N'ID của bệnh nhân không tồn tại', 16, 1)
+--		RETURN
+--    END
+--    UPDATE PERSON
+--    SET person_name = @person_name,
+--		person_phone = @person_phone,
+--        person_birthday = @person_birthday,
+--        person_address = @person_address,
+--        person_gender = @person_gender,
+--        person_type = @person_type
+--    WHERE person_id = @person_id
 
-END;
+--END;
 
 go
 CREATE or alter PROCEDURE insertAppointment
@@ -412,7 +419,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE updateService
+CREATE or alter PROCEDURE updateService
 	@serviceID char(5),
 	@serviceName nvarchar(30),
 	@cost money
@@ -425,7 +432,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE deleteService
+CREATE or alter  PROCEDURE deleteService
 	@serviceID char(5)
 AS
 BEGIN
@@ -598,20 +605,20 @@ BEGIN
 END;
 
 
-exec insertMedicalRecord
-	@examinationDate = '2023-12-05',
-	@payStatus = 0, -- 1: Paid, 0: Unpaid
-	@patientID = '00018',
-	@dentistID = '00012',
-	@appointmentID = '00001'
+--exec insertMedicalRecord
+--	@examinationDate = '2023-12-05',
+--	@payStatus = 0, -- 1: Paid, 0: Unpaid
+--	@patientID = '00018',
+--	@dentistID = '00012',
+--	@appointmentID = '00001'
 
-exec AddServiceList
-	@medical_record_id = '00001',
-	@service_id = 'SV300',
-	@service_quantity = 2;
+--exec AddServiceList
+--	@medical_record_id = '00001',
+--	@service_id = 'SV300',
+--	@service_quantity = 2;
 
 
-exec AddPrescription
-	@medical_record_id = '00001',
-	@drug_id = 'DR001',
-	@drug_quantity = 2;
+--exec AddPrescription
+--	@medical_record_id = '00001',
+--	@drug_id = 'DR001',
+--	@drug_quantity = 2;
