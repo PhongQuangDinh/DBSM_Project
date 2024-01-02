@@ -73,7 +73,7 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        
+
         if password != confirm_password:
             return render_template('signup.html', error='Password does not match')
 
@@ -81,6 +81,57 @@ def signup():
         return redirect('/login')
     else:
         return render_template('signup.html', error = error)
+
+@app.route('/accountlist', methods = ['POST','GET'])
+def accountlist():
+    if request.method == 'POST':
+        account_id = request.form.get('account_id')
+        new_status = request.form.get('new_status')
+        print(account_id)
+        if account_id is not None:
+            cursor.execute("EXEC updateaccount ?, ?", (account_id, new_status))
+
+    cursor.execute('SELECT * FROM Account a join person p on a.account_id = p.account_id')
+    accounts = cursor.fetchall()
+
+    return render_template('accountlist.html', accounts=accounts)
+
+@app.route('/addaccount', methods = ['POST','GET'])
+def addaccount():
+    if request.method == 'POST':
+        # Retrieve data from the form
+        username = request.form['username']
+        patient_name = request.form['person_name']
+        patient_birthday = request.form['person_birthday']
+        patient_address = request.form['person_address']
+        patient_phone = request.form['person_phone']
+        patient_gender = request.form['person_gender']
+
+        #Insert into the Account table
+        cursor.execute("EXEC insertAccount ?, '123456'", (username,))
+        conn.commit()
+
+        cursor.execute("select max(account_id) from Account")
+        account_id = cursor.fetchone()[0]
+        print(account_id)
+        # Insert into the Person table
+        cursor.execute("EXEC insertPerson ?, ?, ?, ?, ?, ?, ?",  # Assuming account_id is NULL initially
+                       (patient_name, patient_phone, patient_birthday, patient_address, patient_gender, 'DE',account_id))
+        conn.commit()
+        # Retrieve the generated person_id
+        # cursor.execute("select max(person_id) from Person")
+        # person_id = cursor.fetchone()
+        # print(person_id)
+
+        # # Retrieve the generated account_id
+        # cursor.execute("select max(account_id) from Account")
+        # account_id = cursor.fetchone()
+        # print(account_id)
+        # # Update the Person table with the generated account_id
+        # cursor.execute("UPDATE Person SET account_id = ? WHERE person_id = ?", (account_id, person_id))
+
+    return render_template('addaccount.html')
+
 
 @app.route('/dentistlist', methods = ['POST','GET'])
 def dentistlist():
@@ -154,7 +205,7 @@ def get_appointments(start_date, end_date):
         WHERE CAST(appointment_date AS DATE) BETWEEN ? AND ?
         ORDER BY dentist_id
     ''', (start_date, end_date))
-    
+
     appointments = cursor.fetchall()
 
     # Convert the result to a list of dictionaries for JSON serialization
@@ -220,8 +271,8 @@ def addpatient():
         patient_gender = request.form['patient_gender']
         patient_email = request.form['patient_email']
 
-        cursor.execute("EXEC insertPatient ?, ?, ?, ?, ?, ?", 
-                       (patient_name, patient_birthday, patient_address, 
+        cursor.execute("EXEC insertPatient ?, ?, ?, ?, ?, ?",
+                       (patient_name, patient_birthday, patient_address,
                         patient_phone, patient_gender, patient_email))
     return render_template('addpatient.html')
 
@@ -236,8 +287,8 @@ def adddentist():
         dentist_gender = request.form['dentist_gender']
         dentist_email = request.form['dentist_email']
 
-        # cursor.execute("EXEC insertdentist ?, ?, ?, ?, ?, ?", 
-        #                (dentist_name, dentist_birthday, dentist_address, 
+        # cursor.execute("EXEC insertdentist ?, ?, ?, ?, ?, ?",
+        #                (dentist_name, dentist_birthday, dentist_address,
         #                 dentist_phone, dentist_gender, dentist_email))
     return render_template('addDentist.html')
 
@@ -253,8 +304,8 @@ def updatepatient():
         patient_gender = request.form['patient_gender']
         patient_email = request.form['patient_email']
 
-        cursor.execute("EXEC updatePatient ?, ?, ?, ?, ?, ?, ?", 
-                       (patient_id, patient_name, patient_birthday, patient_address, 
+        cursor.execute("EXEC updatePatient ?, ?, ?, ?, ?, ?, ?",
+                       (patient_id, patient_name, patient_birthday, patient_address,
                         patient_phone, patient_gender, patient_email))
     return render_template('updatepatient.html')
 
@@ -267,7 +318,7 @@ def updateGeneralHealth():
         health_description = request.form['health_description']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC updateGeneralHealth ?, ?, ?", 
+        cursor.execute("EXEC updateGeneralHealth ?, ?, ?",
                        (patient_id, note_date, health_description))
     return render_template('updategeneralhealth.html')
 
@@ -288,7 +339,7 @@ def patientrecord():
     JOIN TreatmentPlan ON PaymentRecord.treatment_plan_id = TreatmentPlan.treatment_plan_id
     WHERE patient_id = ?''', patient_id)
     total_cost = cursor.fetchone()
-    
+
     return render_template('patientrecord.html', patient = patient, generalhealth = generalhealth, total_cost= total_cost[0], paid_money = paid_money[0])
 
 @app.route('/treatmentplandetail', methods = ['POST','GET'])
@@ -336,8 +387,8 @@ def addtreatmentplan():
                 result.append({'number': groups[0], 'letter': groups[1]})
 
         time = datetime.now()
-        cursor.execute("EXEC insertTreatmentPlan ?, ?, ?, ?, ?, ?, ?", 
-                time, None, None, 
+        cursor.execute("EXEC insertTreatmentPlan ?, ?, ?, ?, ?, ?, ?",
+                time, None, None,
                 selected_treatment, patient_id, dentist_id, nurse_id)
         conn.commit()
         # Lấy treatment_plan_id từ stored procedure insertTreatmentPlan
@@ -346,16 +397,16 @@ def addtreatmentplan():
         treatment_plan_id = cursor.fetchone()
 
         # Thực thi stored procedure insertTreatmentSession
-        cursor.execute("EXEC insertTreatmentSession ?, ?, ?", 
+        cursor.execute("EXEC insertTreatmentSession ?, ?, ?",
                     formatted_date, None, treatment_plan_id.treatment_plan_id)
 
         # Thực thi stored procedure insertToothSelection cho mỗi tooth được chọn
         for tooth_data in result:
             tooth_position_id = tooth_data['number']
             surface_code = tooth_data['letter']
-            cursor.execute("EXEC insertToothSelection ?, ?, ?", 
+            cursor.execute("EXEC insertToothSelection ?, ?, ?",
                         treatment_plan_id.treatment_plan_id, tooth_position_id, surface_code)
-        
+
     cursor.execute('SELECT * FROM Treatment')
     treatment = cursor.fetchall()
     cursor.execute('SELECT * FROM ToothPosition')
@@ -388,7 +439,7 @@ def adddrugallergy():
         drug_allergy_description = request.form['drug_allergy_description']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC insertDrugAllergy ?, ?, ?", 
+        cursor.execute("EXEC insertDrugAllergy ?, ?, ?",
                        (patient_id, drug_id, drug_allergy_description))
     return render_template('adddrugallergy.html')
 
@@ -401,7 +452,7 @@ def addcontradication():
         drug_allergy_description = request.form['drug_allergy_description']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC insertContradiction ?, ?, ?", 
+        cursor.execute("EXEC insertContradiction ?, ?, ?",
                        (patient_id, drug_id, drug_allergy_description))
     return render_template('addcontradication.html')
 
@@ -414,7 +465,7 @@ def updatedrugallergy():
         drug_allergy_description = request.form['drug_allergy_description']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC insertDrugAllergy ?, ?, ?", 
+        cursor.execute("EXEC insertDrugAllergy ?, ?, ?",
                        (patient_id, drug_id, drug_allergy_description))
     return render_template('updatedrugallergy.html')
 
@@ -427,7 +478,7 @@ def updatecontradication():
         drug_allergy_description = request.form['drug_allergy_description']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC insertContradiction ?, ?, ?", 
+        cursor.execute("EXEC insertContradiction ?, ?, ?",
                        (patient_id, drug_id, drug_allergy_description))
     return render_template('updatecontradication.html')
 
@@ -477,15 +528,15 @@ def addinvoice():
         treatment_plan_id = request.form['treatment_plan_id']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC InsertPaymentRecord ?, ?, ?, ?, ?", 
-                       (paid_time, paid_money, payment_note, 
+        cursor.execute("EXEC InsertPaymentRecord ?, ?, ?, ?, ?",
+                       (paid_time, paid_money, payment_note,
                         payment_method_id, treatment_plan_id))
     return render_template('addinvoice.html')
 
 @app.route('/drug', methods = ['POST','GET'])
 def drug():
     drug_id = request.args.get('get_drug_id')
-    
+
     if(drug_id != None):
         cursor.execute(f"EXEC deleteDrug ?", drug_id)
     cursor.execute('SELECT * FROM Drug')
@@ -534,7 +585,7 @@ def addprescription():
         drug_quantity = request.form['drug_quantity']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC AddPrescription ?, ?, ?", 
+        cursor.execute("EXEC AddPrescription ?, ?, ?",
                        (treatment_plan_id, drug_id, drug_quantity))
     return render_template('addprescription.html')
 
@@ -588,7 +639,7 @@ def personalappointment():
 #         WHERE appointment_date = ? and appointment_time = ?
 #         ''', date, time)
 #         appointments = cursor.fetchall()
-#     return render_template('createAppointment.html', appointments = appointments) 
+#     return render_template('createAppointment.html', appointments = appointments)
 
 
 # @app.route('/appointmentinfo', methods = ['POST','GET'])

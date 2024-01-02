@@ -39,7 +39,7 @@ CREATE TABLE Person
 	PRIMARY KEY (person_id)
 )
 ALTER TABLE Person
-ADD CONSTRAINT gender_person CHECK (person_gender in ('Nam', N'Nữ'))
+ADD CONSTRAINT gender_person CHECK (person_gender in (N'Nam', N'Nữ'))
 
 --table personalAppointment
 CREATE TABLE personalAppointment

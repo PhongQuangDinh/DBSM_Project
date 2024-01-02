@@ -108,19 +108,21 @@ END;
 go
 CREATE or alter PROCEDURE updateAccount
 	@accountId char(5),
-	@username varchar(10),
-	@password varchar(15),
+	--@username varchar(10),
+	--@password varchar(15),
 	@accountStatus BIT
 AS
 BEGIN
-	IF NOT EXISTS((SELECT * FROM Account WHERE username = @username))
+	--IF NOT EXISTS((SELECT * FROM Account WHERE username = @username))
+	IF NOT EXISTS((SELECT * FROM Account WHERE account_id = @accountId))
 	BEGIN
         RAISERROR(N'Tên tài khoản không tồn tại', 16, 1)
 		RETURN
     END
 	UPDATE Account
-	SET username = @username,
-	password = @password,
+	SET 
+	--username = @username,
+	--password = @password,
 	account_status = @accountStatus
 	WHERE account_id = @accountId;
 END;
@@ -132,7 +134,8 @@ CREATE or alter PROCEDURE insertPerson
 	@person_birthday DATE,
 	@person_address nvarchar(40),
 	@person_gender nvarchar(3),
-	@person_type char(2)
+	@person_type char(2),
+	@account_id char(5)
 AS
 BEGIN
 	DECLARE @new_person_id char(5);
@@ -146,9 +149,9 @@ BEGIN
 	END
 
     INSERT INTO PERSON
-    (person_id, person_name, person_phone ,person_birthday, person_address, person_gender, person_type)
+    (person_id, person_name, person_phone ,person_birthday, person_address, person_gender, person_type, account_id)
     VALUES
-    (@new_person_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, @person_type)
+    (@new_person_id, @person_name, @person_phone, @person_birthday, @person_address, @person_gender, @person_type, @account_id)
 END;
 
 go
