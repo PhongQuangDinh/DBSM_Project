@@ -1,7 +1,6 @@
 ﻿use QLPHONGKHAMNHAKHOA
 go
 
-
 --unrepeatable read: 
 ----BÁC SĨ xem hồ sơ bệnh án của bệnh nhân mà mình điều trị
 create or alter proc sp_XemHoSoBenhNhan
@@ -16,7 +15,7 @@ begin tran
 			rollback tran
 			return
 		end
-		if not exists(select 1 from Person de where de.person_id = @DENTIST_ID and de.person_type!='DE')
+		if not exists(select 1 from Person de where de.person_id = @DENTIST_ID and de.person_type='DE')
 			begin
 				raiserror(N'Không phải là bác sĩ', 16, 1)
 				rollback tran
@@ -156,8 +155,16 @@ begin tran
 		RETURN;
 	  END
 
+	  if EXISTS(SELECT 1 FROM Prescription WHERE drug_id = @drug_id and @medical_record_id = medical_record_id)
+	  begin
+		RAISERROR(N'Thuốc đã đưucọ cấp', 16, 1, @drug_id);
+		RETURN;
+	  end
+
 	  declare @drug_stock_quantity int
 	  select @drug_stock_quantity = drug_stock_quantity from drug where @drug_id = drug_id
+
+	  select @drug_stock_quantity as drug_stock_quantity_before_supply from drug where @drug_id = drug_id
 
 	  waitfor DELAY '0:0:05'
 
@@ -177,7 +184,7 @@ begin tran
 		@drug_id,
 		@drug_quantity
 	  );
-	select drug_stock_quantity from drug where @drug_id = drug_id
+	select drug_stock_quantity as drug_stock_quantity_after_supply from drug where @drug_id = drug_id
 	end try
 	
 

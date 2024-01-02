@@ -1,6 +1,6 @@
 ﻿use QLPHONGKHAMNHAKHOA
 go
 
---exec XemHoSoBenhNhan '00015'
+--exec sp_XemHoSoBenhNhan '00015'
 
-exec CapThuocChoBenhNhan '00039', 'DR011', 20
+exec sp_CapThuocChoBenhNhan '00001', 'DR009', 4
