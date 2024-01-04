@@ -72,7 +72,7 @@
     <div class="div-13">Danh sách kế hoạch điều trị</div>
     <div class="div-14"></div>            
     <div class="div-29">
-      <a href="/addtreatmentplan?get_patient_id={{ treatmentplanlist[0].patient_id }}" style="text-decoration: none; color: inherit;">Thêm kế hoạch điều trị</a>
+      <a href="/addtreatmentplan?get_patient_id={{ treatmentplanlist.patient_id }}" style="text-decoration: none; color: inherit;">Thêm kế hoạch điều trị</a>
     </div>
     <div class="div-15">
         <div class="column">
@@ -80,32 +80,30 @@
             <div class="div-18">
               <table>
                 <thead>
-                    <tr>
-                        <th>Thời gian tạo</th>
-                        <th>Chú thích</th>
-                        <th>Mô tả</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
+                  <tr>
+                    <th>Ngày khám</th> <th>Trạng thái thanh toán</th>
+                    <th>Bệnh nhân</th> <th>Bác sĩ</th> <th>Lượt khám</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody>
-                    {% for treatmentplan in treatmentplanlist %}
-                        <tr>
-                            <td>{{ treatmentplan.treatment_plan_created_date}}</td>
-                            <td>{{ treatmentplan.treatment_plan_note}}</td>
-                            <td>{{ treatmentplan.treatment_plan_description}}</td>
-                            <td>{{ treatmentplan.treatment_plan_status}}</td>
-                            <td><div class="div-33">
-                              <a href="/updatetreatmentplan?get_treatment_plan_id={{ treatmentplan.treatment_plan_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a>
-                            </div></td>
-                            <td><div class="div-33">
-                              <a href="/treatmentplandetail?get_treatment_plan_id={{ treatmentplan.treatment_plan_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a>
-                            </div></td>
-                        </tr>
-                    {% endfor %}
+                  {% for medical_record in treatmentplanlist %}
+                    <tr>
+                      <td>{{ medical_record.examination_date }}</td>
+                      <td>{{ medical_record.pay_status }}</td>
+                      <td>{{ medical_record.patient_id }}</td> <td>{{ medical_record.dentist_id }}</td> <td>{{ medical_record.appointment_id }}</td>
+                      <td><div class="div-33">
+                        <a href="/updatemedicalrecord?get_medical_record_id={{ medical_record.medical_record_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a>
+                      </div></td>
+                      <td><div class="div-33">
+                        <a href="/medicalrecorddetail?get_medical_record_id={{ medical_record.medical_record_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a>
+                      </div></td>
+                    </tr>
+                  {% endfor %}
                 </tbody>
               </table>
+              
             </div>
         </div>
       </div>

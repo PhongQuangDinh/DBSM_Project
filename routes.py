@@ -7,7 +7,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = secrets.token_urlsafe(32)
-print(app.secret_key)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -149,10 +148,11 @@ def stafflist():
 
 @app.route('/patientinfo', methods = ['POST','GET'])
 def patientinfo():
-    cursor.execute('SELECT * FROM Patient')
+    account_id = session["user"].account_id
+    cursor.execute('SELECT * FROM Person where person_type =? and account_id = ?', ('PA',account_id,))
     patients = cursor.fetchall()
 
-    return render_template('patientinfo.html', patients=patients)
+    return render_template('patientinfo.html', persons=patients)
 
 @app.route('/sessionreport', methods = ['POST','GET'])
 def index():
@@ -324,23 +324,11 @@ def updateGeneralHealth():
 
 @app.route('/patientrecord', methods = ['POST','GET'])
 def patientrecord():
-    patient_id = request.args.get('get_patient_id')
-    cursor.execute('SELECT * FROM Patient where patient_id = ?', patient_id)
+    patient_id = request.args.get('get_person_id')
+    cursor.execute('SELECT * FROM Person where person_id = ?', patient_id)
     patient = cursor.fetchone()
-    cursor.execute('SELECT * FROM generalhealth where patient_id = ?', patient_id)
-    generalhealth = cursor.fetchone()
-    cursor.execute('''SELECT SUM(paid_money)
-    FROM PaymentRecord
-    JOIN TreatmentPlan ON PaymentRecord.treatment_plan_id = TreatmentPlan.treatment_plan_id
-    WHERE patient_id = ?''', patient_id)
-    paid_money = cursor.fetchone()
-    cursor.execute('''SELECT SUM(total_cost)
-    FROM PaymentRecord
-    JOIN TreatmentPlan ON PaymentRecord.treatment_plan_id = TreatmentPlan.treatment_plan_id
-    WHERE patient_id = ?''', patient_id)
-    total_cost = cursor.fetchone()
-
-    return render_template('patientrecord.html', patient = patient, generalhealth = generalhealth, total_cost= total_cost[0], paid_money = paid_money[0])
+    print(patient)
+    return render_template('patientrecord.html', patient = patient)
 
 @app.route('/treatmentplandetail', methods = ['POST','GET'])
 def treatmentplandetail():
@@ -353,12 +341,21 @@ def treatmentplandetail():
     listtreatmenttooth = cursor.fetchall()
     return render_template('treatmentplandetail.html', treatment = treatment, treatmentsession = treatmentsession, listtreatmenttooth= listtreatmenttooth)
 
+@app.route('/medicalrecorddetail', methods = ['POST','GET'])
+def medicalrecorddetail():
+    treatment_plan_id = request.args.get('get_medical_record_id')
+    cursor.execute('SELECT * FROM ServiceList join Service on ServiceList.service_id = Service.service_id where medical_record_id = ?', treatment_plan_id)
+    treatment = cursor.fetchone()
+    cursor.execute('SELECT * FROM Prescription join drug on Prescription.drug_id = drug.drug_id where medical_record_id =?', treatment_plan_id)
+    prescription = cursor.fetchall()
+    return render_template('medicalrecorddetail.html', treatment = treatment, prescription = prescription, medical_record_id = treatment_plan_id)
+
+
 @app.route('/treatmentplanlist', methods = ['POST','GET'])
 def treatmentplanlist():
     patient_id = request.args.get('get_patient_id')
-    cursor.execute('SELECT * FROM TreatmentPlan where patient_id = ?', patient_id)
+    cursor.execute('SELECT * FROM MedicalRecord where patient_id = ?', patient_id)
     treatmentplanlist = cursor.fetchall()
-    print(treatmentplanlist[0].patient_id)
     return render_template('treatmentplanlist.html', treatmentplanlist = treatmentplanlist)
 
 @app.route('/addtreatmentplan', methods = ['POST','GET'])
@@ -487,12 +484,11 @@ def invoice():
     patient_id = request.args.get('get_patient_id')
     cursor.execute('''
         SELECT *
-        FROM TreatmentPlan
-        JOIN PaymentRecord ON TreatmentPlan.treatment_plan_id = PaymentRecord.treatment_plan_id
-        WHERE TreatmentPlan.patient_id = ?
+        FROM Bill 
+        WHERE patient_id = ?
     ''', patient_id)
     invoices = cursor.fetchall()
-    return render_template('invoice.html', invoices=invoices)
+    return render_template('invoice.html', invoices=invoices, patient_id = patient_id)
 
 @app.route('/invoicedetail', methods = ['POST','GET'])
 def invoicedetail():
@@ -519,18 +515,16 @@ def invoicedetail():
 
 @app.route('/addinvoice', methods = ['POST','GET'])
 def addinvoice():
+    patient_id = request.args.get('get_patient_id')
     if request.method == 'POST':
         # Lấy thông tin từ form
         paid_time = request.form['paid_time']
-        paid_money = request.form['paid_money']
-        payment_note = request.form['payment_note']
-        payment_method_id = request.form['payment_method_id']
-        treatment_plan_id = request.form['treatment_plan_id']
+        medicalrecordid = request.form['medical_record_id']
 
         # Thực thi stored procedure
-        cursor.execute("EXEC InsertPaymentRecord ?, ?, ?, ?, ?",
-                       (paid_time, paid_money, payment_note,
-                        payment_method_id, treatment_plan_id))
+        cursor.execute("EXEC insertBill ?, ?, ?",
+                       (paid_time,medicalrecordid
+                        , patient_id))
     return render_template('addinvoice.html')
 
 @app.route('/drug', methods = ['POST','GET'])

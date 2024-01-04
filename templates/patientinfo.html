@@ -87,29 +87,35 @@
                         <th>Address</th>
                         <th>Phone</th>
                         <th>Gender</th>
-                        <th>Email</th>
+
                         <th></th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for patient in patients %}
+                    {% for person in persons %}
                         <tr>
-                            <td>{{ patient.patient_id}}</td>
-                            <td>{{ patient.patient_name}}</td>
-                            <td>{{ patient.patient_birthday}}</td>
-                            <td>{{ patient.patient_address}}</td>
-                            <td>{{ patient.patient_phone}}</td>
-                            <td>{{ patient.patient_gender}}</td>
-                            <td>{{ patient.patient_email}}</td>
-                            <td><div class="div-33">
-                              <a href="/updatepatient?get_patient_id={{ patient.patient_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a></div></td>
-                            <td><div class="div-34">
-                              <a href="/patientrecord?get_patient_id={{ patient.patient_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a></div></td>
+                            <td>{{ person.person_id }}</td>
+                            <td>{{ person.person_name }}</td>
+                            <td>{{ person.person_birthday }}</td>
+                            <td>{{ person.person_address }}</td>
+                            <td>{{ person.person_phone }}</td>
+                            <td>{{ person.person_gender }}</td>
+                            <td>
+                                <div class="div-33">
+                                    <a href="/updateperson?get_person_id={{ person.person_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="div-34">
+                                    <a href="/patientrecord?get_person_id={{ person.person_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
-              </table>
+            </table>
+            
             </div>
         </div>
       </div>
