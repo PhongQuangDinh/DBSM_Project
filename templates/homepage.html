@@ -34,6 +34,7 @@
             <span class="trangch-text04"><span><a href="/logout" class="text-wrapper-7"> Đăng xuất</a></span>
           {% endif %}
         </div>
+        <!-- First square -->
         {%if person.person_type == 'AD' or person.person_type == 'ST' or person.person_type == 'DE'%}
         <div class="trangch-group170">
           <span class="trangch-text06"><span>
@@ -42,14 +43,17 @@
         </div>
         {%endif%}
 
-        {%if person.person_type == 'AD'%}
+        
+        <!-- Second square -->
+        {%if person.person_type == 'AD' or person.person_type == 'ST'%}
         <div class="trangch-group171">
           <div class="trangch-group168">
             <a href="/patientinfo" style="text-decoration: none; color: inherit;" class="trangch-text08">Bệnh nhân</a>
           </div>
         </div>
         {%endif%}
-
+        
+        <!-- Third square -->
         {%if person.person_type == 'AD'%}
         <div class="trangch-group172">
           <div class="trangch-group1681">
@@ -59,8 +63,19 @@
           </div>
         </div>
         {%endif%}
+
+        {%if person.person_type == 'ST'%}
+        <div class="trangch-group172">
+          <div class="trangch-group1681">
+            <span class="trangch-text10"><span>
+              <a href="/drug" style="text-decoration: none; color: inherit;">Thuốc</a>
+            </span></span>
+          </div>
+        </div>
+        {%endif%}
         
-        {%if person.person_type == 'AD' or person.person_type == 'ST'%}
+        <!-- Fourth square -->
+        {%if person.person_type == 'AD'%}
         <div class="trangch-group173">
           <div class="trangch-group1682">
             <span class="trangch-text12"><span>
@@ -70,12 +85,15 @@
         </div>
         {%endif%}
 
+        
+        <!-- Fifth square -->
         {%if person.person_type == 'AD'%}
         <div class="trangch-group169">
           <span class="trangch-text14"><span>
             <a href="/dentistlist" style="text-decoration: none; color: inherit;">Nha sĩ</a></span></span>
         </div>
         {%endif%}
+        
         <!-- <div class="trangch-group175">
           <span class="trangch-text16"><span><a href="/sessionreport" style="text-decoration: none; color: inherit;">Báo cáo điều trị</a></span></span>
         </div>
