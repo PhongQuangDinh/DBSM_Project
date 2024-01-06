@@ -6,7 +6,9 @@ import re
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = secrets.token_urlsafe(32)
+# key = secrets.token_urlsafe(32) # create one time only, avoid cant create pyodbc.ROW instance error
+# print(key)
+app.secret_key = "13RPk7SDKm9jwEt2vd7rJM1TWs1N1CvAI9WWd1_wYBc"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -15,6 +17,7 @@ current_patient = ''
 # userList = []
 @app.route('/', methods = ['POST','GET'])
 def homepage():
+    person_detail = None
     isLogOut = True
     # print('get started')
     # return render_template('homepage.html')
@@ -23,8 +26,13 @@ def homepage():
         isLogOut = True
         return redirect("/login")
     else:
+        print('get info')
+        empID = session["user"].account_id
+        cursor.execute('SELECT * from Person where account_id = ?', (empID))
+        session['user_detail'] = cursor.fetchone()
+        person_detail = session['user_detail']
         isLogOut = False
-    return render_template('homepage.html', isLogOut=isLogOut)
+    return render_template('homepage.html', isLogOut=isLogOut, person = person_detail)
 
 @app.route("/logout")
 def logout():
@@ -34,10 +42,7 @@ def logout():
 
 @app.route('/employeeIn4', methods = ['POST','GET'])
 def PatientIn4Test():
-    print('get info')
-    empID = session["user"].account_id
-    cursor.execute('SELECT * from Person where account_id = ?', (empID))
-    employeeInfo = cursor.fetchone()
+    employeeInfo = session['user_detail']
     if employeeInfo == None:
         return redirect('/login')
     print(employeeInfo.person_name)
@@ -603,7 +608,7 @@ def updateprescription():
 def appointment():
     date = request.form.get('date')
     time = request.form.get('time')
-    cursor.execute('''SELECT * FROM Appointment Join Employee on dentist_id = employee_id''')
+    cursor.execute('''SELECT * FROM Appointment a Join Person p on a.dentist_id = p.person_id''')
     appointments = cursor.fetchall()
     return render_template('appointment.html', appointments = appointments)
 
