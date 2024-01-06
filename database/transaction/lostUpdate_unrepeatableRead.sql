@@ -1,6 +1,5 @@
 ﻿use QLPHONGKHAMNHAKHOA
 go
-
 --unrepeatable read: 
 ----BÁC SĨ xem hồ sơ bệnh án của bệnh nhân mà mình điều trị
 create or alter proc sp_XemHoSoBenhNhan
@@ -20,16 +19,16 @@ begin tran
 				raiserror(N'Không phải là bác sĩ', 16, 1)
 				rollback tran
 				return
-			end
-			select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
-			from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
-			where mr.dentist_id = @DENTIST_ID
+		end
+		select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
+		from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
+		where mr.dentist_id = @DENTIST_ID
 
-			waitfor DELAY '0:0:05'
+		waitfor DELAY '0:0:05'
 
-			select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
-			from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
-			where mr.dentist_id = @DENTIST_ID
+		select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
+		from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
+		where mr.dentist_id = @DENTIST_ID
 	end try
 	BEGIN CATCH 
 		DECLARE @ErrorMsg VARCHAR(2000)
@@ -53,17 +52,17 @@ begin tran
 	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 	begin try
 		if not exists(select 1 from Person pa where pa.person_phone = @personPhone and pa.person_type = 'PA')
-			begin
-				raiserror(N'Bệnh nhân không tồn tại', 16, 1)
-				rollback tran
-				return
-			end
+		begin
+			raiserror(N'Bệnh nhân không tồn tại', 16, 1)
+			rollback tran
+			return
+		end
 		else 
-			begin
-				update Person
-				set person_name = @personName, person_birthday = @personBirthday, person_address = @personAddress
-				where person_phone = @personPhone
-			end
+		begin
+			update Person
+			set person_name = @personName, person_birthday = @personBirthday, person_address = @personAddress
+			where person_phone = @personPhone
+		end
 	end try
 	BEGIN CATCH 
 		DECLARE @ErrorMsg VARCHAR(2000)
@@ -157,7 +156,7 @@ begin tran
 
 	  if EXISTS(SELECT 1 FROM Prescription WHERE drug_id = @drug_id and @medical_record_id = medical_record_id)
 	  begin
-		RAISERROR(N'Thuốc đã đưucọ cấp', 16, 1, @drug_id);
+		RAISERROR(N'Thuốc đã được cấp', 16, 1, @drug_id);
 		RETURN;
 	  end
 

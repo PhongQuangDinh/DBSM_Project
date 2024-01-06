@@ -43,7 +43,7 @@
     <div class="div-16"></div>
     <div class="div-17">THÊM BỆNH NHÂN</div>
     <div class="div-18"></div>
-    <div class="div-19">
+    <!-- <div class="div-19">
       <div class="div-20">Họ tên:</div>
       <img
         loading="lazy"
@@ -82,10 +82,30 @@
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/87f860bbad1cd88607f94874f6c4c0160405689e8d0ebfa379480bb3c7f7c2ba?apiKey=2071392eb4a74fd9aa2fc08fb1d20b6e&"
         class="img-9"
       />
-    </div>
-    <div class="div-29">
-      <div class="div-30">Quay lại</div>
-      <div class="div-31">Thêm bệnh nhân</div>
+    </div> -->
+    <form method="post" action="/patientinfo">
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <label class="text-wrapper-3" for="name">Họ tên</label>
+        <input class="div-wrapper" style="height: 30px; width: 300px;" type="text" name="name" required>
+        <label class="text-wrapper-3" for="phone">Số điện thoại</label>
+        <input class="div-wrapper" style="height: 30px; width: 300px;" type="text" name="phone" required>
+        <label class="text-wrapper-3" for="gender">Giới tính</label>
+        <input class="div-wrapper" style="height: 30px; width: 300px;" type="text" name="gender" required>
+        <label class="text-wrapper-3" for="address">Địa chỉ</label>
+        <input class="div-wrapper" style="height: 30px; width: 300px;" type="text" name="address" required>
+        <label class="text-wrapper-5"  for="birthday">Ngày sinh</label>
+        <input class="overlap-3" style="height: 30px; width: 300px;" type="date" name="birthday" required>
+        <label class="text-wrapper-5" for="email">Email</label>
+        <input class="overlap-3" style="height: 30px; width: 300px;" type="email" name="email" required>
+          <div style="padding-top: 40px;"><input class="overlap-4" type="submit" value="Add Patient"></div>
+        </div>
+      </form>
+      
+      <div class="div-29">
+        <div class="div-30">Quay lại</div>
+        <a href="/patientinfo" style="text-decoration: none; color: inherit;">Quay lại</a>
+        <div class="div-31">Thêm bệnh nhân</div>
+      </div>
     </div>
   </div>
   <style>
@@ -135,7 +155,7 @@
       font: 400 28px Inter, sans-serif;
     }
     .div-5 {
-      disply: flex;
+      display: flex;
       flex-direction: column;
       stroke-width: 1px;
       stroke: #000;

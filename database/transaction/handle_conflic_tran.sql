@@ -2,36 +2,31 @@
 go
 
 --xử lý tranh chấp đồng thời
-create or alter proc XemHoSoBenhNhan
+create or alter proc sp_XemHoSoBenhNhan
 					@DENTIST_ID char(5)
 as
 begin tran
-	SET TRAN ISOLATION LEVEL REPEATABLE READ
+	SET TRAN ISOLATION LEVEL SERIALIZABLE
 	begin try
 		if not exists(select 1 from Person de where de.person_id = @DENTIST_ID)
 			begin
 				raiserror(N'Bác sĩ không tồn tại', 16, 1)
-				rollback tran
 				return
 			end
-		else if not exists(select 1 from Person de where de.person_id = @DENTIST_ID and de.person_type!='DE')
+		if not exists(select 1 from Person de where de.person_id = @DENTIST_ID and de.person_type='DE')
 			begin
 				raiserror(N'Bác sĩ không tồn tại', 16, 1)
-				rollback tran
 				return
 			end
-		else 
-			begin
-				select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
-				from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
-				where mr.dentist_id = @DENTIST_ID
+		select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
+		from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
+		where mr.dentist_id = @DENTIST_ID
+				
+		waitfor DELAY '0:0:05'
 
-				waitfor DELAY '0:0:05'
-
-				select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
-				from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
-				where mr.dentist_id = @DENTIST_ID
-			end
+		select pa.person_name as patientName, pa.person_birthday, pa.person_address, pa.person_phone, mr.examination_date
+		from MedicalRecord mr join Person pa on pa.person_id = mr.patient_id
+		where mr.dentist_id = @DENTIST_ID
 	end try
 	BEGIN CATCH 
 		DECLARE @ErrorMsg VARCHAR(2000)
@@ -43,13 +38,14 @@ begin tran
 commit tran
 go
 
-create or alter proc CapNhatThongTinCaNhan
+create or alter proc sp_CapNhatThongTinCaNhan
 						@personName nvarchar(30),
 						@personPhone char(10),
 						@personBirthday DATE,
 						@personAddress nvarchar(40)
 as
 begin tran
+	SET TRAN ISOLATION LEVEL SERIALIZABLE
 	begin try
 		if not exists(select 1 from Person pa where pa.person_phone = @personPhone)
 			begin
@@ -76,7 +72,7 @@ go
 
 --lost update
 -- bác sĩ cấp thuốc cho bệnh nhân
-create or alter proc CapThuocChoBenhNhan
+create or alter proc sp_CapThuocChoBenhNhan
 	@medical_record_id char(5),
 	@drug_id char(5),
 	@drug_quantity int
@@ -100,6 +96,12 @@ begin tran
 		RAISERROR(N'Thuốc đã hết hạn.', 16, 1, @drug_id);
 		RETURN;
 	  END
+
+	  if EXISTS(SELECT 1 FROM Prescription WHERE drug_id = @drug_id and @medical_record_id = medical_record_id)
+	  begin
+		RAISERROR(N'Thuốc đã được cấp', 16, 1, @drug_id);
+		RETURN;
+	  end
 
 	  --SET LOCK_MODE  UPDLOCK
 
@@ -139,7 +141,7 @@ commit tran
 go
 
 --admin thêm thuốc vào kho 
-create or alter proc CapNhatThuoc
+create or alter proc sp_CapNhatThuoc
 	@drug_id char(5),
 	@drug_quantity int
 AS
