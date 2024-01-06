@@ -51,7 +51,7 @@ def login():
         password = request.form['password']
         try:
             # Check if the username and password are correct
-            cursor.execute('SELECT * FROM Account WHERE username = ?', username)
+            cursor.execute('SELECT ac.account_id as account_id, p.person_type as person_type, ac.password as password FROM Account ac join person p on ac.account_id = p.account_id WHERE username = ?', username)
             user = cursor.fetchone()
             if user == None:
                 error = 'Invalid username or password. Please try again.'
@@ -149,7 +149,11 @@ def stafflist():
 @app.route('/patientinfo', methods = ['POST','GET'])
 def patientinfo():
     account_id = session["user"].account_id
-    cursor.execute('SELECT * FROM Person where person_type =? and account_id = ?', ('PA',account_id,))
+    account_type = session["user"].person_type
+    if (account_type == 'PA'):
+        cursor.execute('SELECT * FROM Person where person_type =? and account_id = ?', ('PA',account_id,))
+    else:
+        cursor.execute("SELECT * FROM Person where person_type = 'PA'")
     patients = cursor.fetchall()
 
     return render_template('patientinfo.html', persons=patients)
