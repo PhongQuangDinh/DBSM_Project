@@ -40,23 +40,22 @@
   <div class="div-18"></div>
   <div class="div-19">
     <div class="div-20">Thông tin của bạn</div>
-    <div class="div-22">Họ tên: {{ employee.employee_name }}</div>
-    <div class="div-23">Số điện thoại: {{ employee.employee_phone }}</div>
-    <div class="div-24">Giới tính: {{ employee.employee_gender }}</div>
-    <div class="div-25">Ngày Sinh: {{ employee.employee_birthday }} </div>
-    <div class="div-26">Địa chỉ: {{ employee.employee_address }}</div>
-    <div class="div-27">Căn cước công dân: {{ employee.employee_national_id }}</div>
-    {% if employee.employee_type == 'DE' %}
-      <div class="div-31">Nghề nghiệp: Nha sĩ</div>
+    <div class="div-22">Họ tên: {{ employee.person_name }}</div>
+    <div class="div-23">Số điện thoại: {{ employee.person_phone }}</div>
+    <div class="div-24">Giới tính: {{ employee.person_gender }}</div>
+    <div class="div-25">Ngày Sinh: {{ employee.person_birthday }} </div>
+    <div class="div-26">Địa chỉ: {{ employee.person_address }}</div>
+    {% if employee.person_type == 'DE' %}
+      <div class="div-31">Loại tài khoản: Nha sĩ</div>
     {% endif %}
-    {% if employee.employee_type == 'ST' %}
-      <div class="div-31">Nghề nghiệp: Nhân viên</div>
+    {% if employee.person_type == 'ST' %}
+      <div class="div-31">Loại tài khoản: Nhân viên</div>
     {% endif %}
-    {% if employee.employee_type == 'NU' %}
-      <div class="div-31">Nghề nghiệp: Y tá</div>
+    {% if employee.person_type == 'PA' %}
+      <div class="div-31">Loại tài khoản: Bệnh nhân</div>
     {% endif %}
-    {% if employee.employee_type == 'AD' %}
-      <div class="div-31">Nghề nghiệp: Quản trị viên</div>
+    {% if employee.person_type == 'AD' %}
+      <div class="div-31">Loại tài khoản: Quản trị viên</div>
     {% endif %}
     <div class="div-28">
       <div class="div-30">Cập nhật</div>

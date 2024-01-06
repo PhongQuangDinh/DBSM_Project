@@ -106,10 +106,10 @@ as
 select se.[service_name], sl.service_quantity, pe.person_name as PatientName, pe.person_phone
 from MedicalRecord me join ServiceList sl on sl.medical_record_id = me.medical_record_id join Person pe on pe.person_id = me.patient_id join [Service] se on se.service_id = sl.service_id
 
-create view User_Service
-as
-select [service_name], cost
-from [Service]
+--create view User_Service
+--as
+--select [service_name], cost
+--from [Service]
 
 --tìm tất cả bác sĩ có thời gian rảnh vào ngày h đó
 create or alter proc View_Patient_PersonalAppointment

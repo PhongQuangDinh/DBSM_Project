@@ -69,7 +69,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE insertAccount
+CREATE or alter PROCEDURE insertAccount
 	@username varchar(10),
 	@password varchar(15)
 AS
@@ -240,6 +240,7 @@ CREATE or alter PROCEDURE insertAppointment
 AS
 BEGIN
 	IF NOT EXISTS (SELECT * FROM Patient pa join Person pe on pe.person_id = pa.patient_id WHERE pe.person_phone = @patientPhone)
+	BEGIN
 		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
 		RETURN
 	END
@@ -408,7 +409,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE updateService
+CREATE OR ALTER PROC updateService
 	@serviceID char(5),
 	@serviceName nvarchar(30),
 	@cost money
@@ -421,7 +422,7 @@ BEGIN
 END;
 
 go
-CREATE PROCEDURE deleteService
+CREATE OR ALTER PROC deleteService
 	@serviceID char(5)
 AS
 BEGIN

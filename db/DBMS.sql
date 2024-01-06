@@ -33,7 +33,7 @@ CREATE TABLE Person
 	person_address nvarchar(40),
 	person_gender nvarchar(3) NOT NULL,
 	person_type char(2) NOT NULL,
-	account_id char(5)
+	account_id char(5),
 
 	CONSTRAINT PK_Person
 	PRIMARY KEY (person_id)

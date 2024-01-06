@@ -35,12 +35,12 @@ def logout():
 @app.route('/employeeIn4', methods = ['POST','GET'])
 def PatientIn4Test():
     print('get info')
-    empID = session["user"].accountID
-    cursor.execute('SELECT * from Employee where account_id = ?', (empID))
+    empID = session["user"].account_id
+    cursor.execute('SELECT * from Person where account_id = ?', (empID))
     employeeInfo = cursor.fetchone()
     if employeeInfo == None:
         return redirect('/login')
-    print(employeeInfo.employee_name)
+    print(employeeInfo.person_name)
     return render_template('employeein4.html',employee = employeeInfo)
 
 @app.route('/login', methods = ['POST','GET'])

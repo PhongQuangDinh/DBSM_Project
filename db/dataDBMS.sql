@@ -45,7 +45,6 @@ VALUES
 ('00036', '0123456772', '123456', 1),
 ('00037', '0987654312', '123456', 1);
 
-
 INSERT INTO Person (person_id, person_name, person_phone, person_birthday, person_address, person_gender, person_type, account_id)
 Values 
 ('00012', N'Nguyễn Văn An', '0123456789', '1980-10-01', N'Số 12, Phố Lê Văn Lương, Hà Nội', N'Nam', 'DE', '00012'),
