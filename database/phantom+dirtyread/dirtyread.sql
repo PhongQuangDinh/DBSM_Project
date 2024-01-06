@@ -1,5 +1,5 @@
 ﻿go
-CREATE or alter PROCEDURE updateAccount
+CREATE or alter PROCEDURE sp_updateAccount
 	@username varchar(10),
 	@accountStatus BIT
 AS
@@ -12,7 +12,7 @@ BEGIN TRAN
 		RETURN
     END
 	DECLARE @status BIT
-	SET @status = (SELECT account_status from Account)
+	SET @status = (SELECT account_status from Account WHERE username = @username)
 	IF @status = 1
 	BEGIN
         RAISERROR(N'Tài khoản đã khóa', 16, 1)
@@ -24,8 +24,10 @@ BEGIN TRAN
 		account_status = @accountStatus
 	WHERE username = @username;
 	WAITFOR DELAY '0:0:05'
+
 	ROLLBACK TRAN 
-	RETURN
+	RETURN;
+
 	END TRY
 	BEGIN CATCH
 		PRINT N'LỖI HỆ THỐNG'
@@ -36,14 +38,14 @@ COMMIT TRAN
 RETURN
 
 go
-CREATE or alter PROCEDURE insertAppointment
+CREATE or alter PROCEDURE sp_insertAppointment
 	@patientID char(5),
 	@dentistID char(5),
 	@appointmentStartTime time,
 	@appointmentDate date
 AS
---SET TRAN ISOLATION LEVEL READ UNCOMMITTED
 BEGIN TRAN
+	--SET TRAN ISOLATION LEVEL READ UNCOMMITTED
 	BEGIN TRY
 	IF NOT EXISTS (SELECT * FROM Account WHERE account_id = @patientID)
 	BEGIN
@@ -57,13 +59,13 @@ BEGIN TRAN
 		rollback tran
 		RETURN
 	END
-	IF EXISTS (SELECT * FROM Account WHERE account_id = @patientID AND account_status = 0)
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @patientID AND account_status = 1)
 	BEGIN
 			PRINT N'TÀI KHOẢN BỆNH NHÂN ĐÃ BỊ KHÓA'
 			ROLLBACK TRAN
 			RETURN 
 	END
-	IF EXISTS (SELECT * FROM Account WHERE account_id = @dentistID AND account_status = 0)
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @dentistID AND account_status = 1)
 	BEGIN
 			PRINT N'TÀI KHOẢN NHA SĨ ĐÃ BỊ KHÓA'
 			ROLLBACK TRAN
@@ -104,10 +106,10 @@ BEGIN TRAN
 	END CATCH
 COMMIT TRAN
 
-EXEC updateAccount 'dentist1','123456', 1
-EXEC insertAppointment '00033', '00012', '16:30:00', '2023-10-01'
-SELECT * FROM Account WHERE account_id = '00012'
-SELECT * FROM Appointment WHERE appointment_id = '00050'
+--EXEC sp_updateAccount 'dentist1','123456', 1
+--EXEC sp_insertAppointment '00033', '00012', '16:30:00', '2023-10-01'
+--SELECT * FROM Account WHERE account_id = '00012'
+--SELECT * FROM Appointment WHERE appointment_id = '00050'
 
 
-delete Appointment where appointment_id = '00050'
+--delete Appointment where appointment_id = '00050'
