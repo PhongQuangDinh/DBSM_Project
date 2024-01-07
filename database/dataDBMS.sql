@@ -106,6 +106,7 @@ VALUES
 ('DR015', N'viên', N'Thuốc đánh răng', N'Vệ sinh răng miệng', '2025-09-20', 150000, 1500),
 ('DR016', N'viên', N'Dây thun nha khoa', N'Loại bỏ mảng bám', '2025-10-20', 160000, 1600);
 
+select * from Drug
 
 INSERT INTO Service (service_id, service_name, cost)
 VALUES

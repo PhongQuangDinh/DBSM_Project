@@ -577,7 +577,7 @@ BEGIN
     RETURN;
   END
 
-  if (@drug_quantity<(select drug_stock_quantity from Drug where drug_id = @drug_id))
+  if (@drug_quantity>(select drug_stock_quantity from Drug where drug_id = @drug_id))
   begin
     RAISERROR(N'Thuốc trong kho không đủ cấp', 16, 1);
     RETURN;

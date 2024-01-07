@@ -336,6 +336,7 @@ def patientrecord():
     patient_id = request.args.get('get_person_id')
     cursor.execute('SELECT * FROM Person where person_id = ?', patient_id)
     patient = cursor.fetchone()
+    session['patient_id'] = patient_id
     print(patient)
     return render_template('patientrecord.html', patient = patient)
 
@@ -524,16 +525,15 @@ def invoicedetail():
 
 @app.route('/addinvoice', methods = ['POST','GET'])
 def addinvoice():
-    patient_id = request.args.get('get_patient_id')
+    patient_id = session.get('patient_id')
     if request.method == 'POST':
         # Lấy thông tin từ form
-        paid_time = request.form['paid_time']
+        paid_time = (request.form['paid_time'])
+        print(paid_time)
         medicalrecordid = request.form['medical_record_id']
-
+        print(patient_id)
         # Thực thi stored procedure
-        cursor.execute("EXEC insertBill ?, ?, ?",
-                       (paid_time,medicalrecordid
-                        , patient_id))
+        cursor.execute("EXEC insertBill ?, ?, ?", (paid_time, patient_id, medicalrecordid,))
     return render_template('addinvoice.html')
 
 @app.route('/drug', methods = ['POST','GET'])
@@ -589,7 +589,7 @@ def addprescription():
 
         # Thực thi stored procedure
         cursor.execute("EXEC AddPrescription ?, ?, ?",
-                       (treatment_plan_id, drug_id, drug_quantity))
+                       ('00040', drug_id, drug_quantity))
     return render_template('addprescription.html')
 
 @app.route('/updateprescription', methods = ['POST','GET'])
