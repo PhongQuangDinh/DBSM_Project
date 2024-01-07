@@ -139,7 +139,7 @@ def addaccount():
 
 @app.route('/dentistlist', methods = ['POST','GET'])
 def dentistlist():
-    cursor.execute('SELECT * FROM Employee WHERE employee_type = ?', ('DE',))
+    cursor.execute('SELECT * FROM Person WHERE person_type = ?', ('DE',))
     dentists = cursor.fetchall()
 
     return render_template('dentistlist.html', dentists=dentists)

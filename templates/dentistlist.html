@@ -94,20 +94,18 @@
                       </tr>
                   </thead>
                   <tbody>
-                      {% for employee in dentists %}
-                          <tr>
-                              <td>{{ employee.employee_id }}</td>
-                              <td>{{ employee.employee_name }}</td>
-                              <td>{{ employee.employee_gender }}</td>
-                              <td>{{ employee.employee_birthday }}</td>
-                              <td>{{ employee.employee_address }}</td>
-                              <td>{{ employee.employee_national_id }}</td>
-                              <td>{{ employee.employee_phone }}</td>
-                              <td>{{ employee.branch_id }}</td>
+                      {% for account in dentists %}
+                        <tr>
+                            <td>{{ account.person_name }}</td>
+                            <td>{{ account.person_phone }}</td>
+                            <td>{{ account.person_birthday }}</td>
+                            <td>{{ account.person_address }}</td>
+                            <td>{{ account.person_gender }}</td>
+                            <td>{{ account.person_type }}</td>
                               <td><div class="div-33">
-                                <a href="/adddentist?get_employee_id={{ employee.employee_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a></div></td>
+                                <a href="/adddentist?get_employee_id={{ account.account_id }}" style="text-decoration: none; color: inherit;">Cập nhật</a></div></td>
                               <td><div class="div-34">
-                                <a href="/personalappointment?get_employee_id={{ employee.employee_id }}" style="text-decoration: none; color: inherit;">Lịch làm việc</a></div></td>
+                                <a href="/personalappointment?get_employee_id={{ account.account_id }}" style="text-decoration: none; color: inherit;">Lịch làm việc</a></div></td>
                           </tr>
                       {% endfor %}
                   </tbody>
