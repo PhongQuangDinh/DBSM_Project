@@ -240,25 +240,95 @@ go
 
 --END;
 
+--go
+--CREATE or alter PROCEDURE insertAppointment
+--	@patientPhone char(10),
+--	@dentistID char(5),
+--	@appointmentStartTime time,
+--	@appointmentDate date
+--AS
+--BEGIN
+--	IF NOT EXISTS (SELECT * FROM Person WHERE person_phone = @patientPhone)
+--	BEGIN
+--		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
+--		RETURN
+--	END
+--	IF NOT EXISTS (SELECT * FROM Person WHERE person_id = @dentistID)
+--	BEGIN
+--		raiserror(N'Bác sĩ không tồn tại', 16, 1)
+--		RETURN
+--	END
+--	DECLARE @new_appointment_id char(5)
+--	IF NOT EXISTS (SELECT * FROM Appointment)
+--    BEGIN
+--        SET @new_appointment_id = '00001';
+--    END
+--    ELSE
+--    BEGIN
+--		SELECT @new_appointment_id = RIGHT('00000' + CAST(CAST(SUBSTRING((SELECT MAX(appointment_id) from Appointment), 2, 4) AS INT) + 1 AS VARCHAR(5)), 5)
+--    FROM Appointment;
+--	END
+
+--	declare @patientID char(5)
+--	SELECT @patientID = pe.person_id FROM Person pe WHERE pe.person_phone = @patientPhone
+--	declare @stt int
+--	set @stt = DATEDIFF(MINUTE, '09:00:00', @appointmentStartTime)/30 + 1
+--	INSERT INTO Appointment (
+--	patient_id,
+--	dentist_id,
+--	appointment_id,
+--	appointment_start_time,
+--	appointment_status,
+--	appointment_number,
+--	appointment_date
+--	)
+--	VALUES
+--	(@patientID,
+--	@dentistID,
+--	@new_appointment_id,
+--	@appointmentStartTime,
+--	0,
+--	@stt,
+--	@appointmentDate
+--	);
+--END;
+
+
 go
 CREATE or alter PROCEDURE insertAppointment
-	@patientPhone char(10),
+	@patientID char(5),
 	@dentistID char(5),
 	@appointmentStartTime time,
 	@appointmentDate date
 AS
-BEGIN
-	IF NOT EXISTS (SELECT * FROM Person WHERE person_phone = @patientPhone)
+BEGIN TRAN
+	--SET TRAN ISOLATION LEVEL READ UNCOMMITTED
+	BEGIN TRY
+	IF NOT EXISTS (SELECT * FROM Account WHERE account_id = @patientID)
 	BEGIN
-		raiserror(N'Bệnh nhân không tồn tại', 16, 1)
+		PRINT  N'Bệnh nhân không tồn tại'
+		rollback tran
 		RETURN
 	END
-	IF NOT EXISTS (SELECT * FROM Person WHERE person_id = @dentistID)
+	IF NOT EXISTS (SELECT * FROM Account WHERE account_id = @dentistID)
 	BEGIN
-		raiserror(N'Bác sĩ không tồn tại', 16, 1)
+		PRINT  N'Bác sĩ không tồn tại'
+		rollback tran
 		RETURN
 	END
-	DECLARE @new_appointment_id char(5)
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @patientID AND account_status = 1)
+	BEGIN
+			PRINT N'TÀI KHOẢN BỆNH NHÂN ĐÃ BỊ KHÓA'
+			ROLLBACK TRAN
+			RETURN 
+	END
+	IF EXISTS (SELECT * FROM Account WHERE account_id = @dentistID AND account_status = 1)
+	BEGIN
+			PRINT N'TÀI KHOẢN NHA SĨ ĐÃ BỊ KHÓA'
+			ROLLBACK TRAN
+			RETURN 
+	END
+	DECLARE @new_appointment_id char(5);
 	IF NOT EXISTS (SELECT * FROM Appointment)
     BEGIN
         SET @new_appointment_id = '00001';
@@ -269,29 +339,30 @@ BEGIN
     FROM Appointment;
 	END
 
-	declare @patientID char(5)
-	SELECT @patientID = pe.person_id FROM Person pe WHERE pe.person_phone = @patientPhone
-	declare @stt int
-	set @stt = DATEDIFF(MINUTE, '09:00:00', @appointmentStartTime)/30 + 1
 	INSERT INTO Appointment (
+	appointment_id,
 	patient_id,
 	dentist_id,
-	appointment_id,
 	appointment_start_time,
 	appointment_status,
 	appointment_number,
 	appointment_date
 	)
 	VALUES
-	(@patientID,
+	(@new_appointment_id,
+	@patientID,
 	@dentistID,
-	@new_appointment_id,
 	@appointmentStartTime,
 	0,
-	@stt,
-	@appointmentDate
-	);
-END;
+	DATEDIFF(MINUTE, '09:00:00', @appointmentStartTime)/30 + 1,
+	@appointmentDate);
+	END TRY
+	BEGIN CATCH
+		PRINT N'LỖI HỆ THỐNG'
+		ROLLBACK TRAN
+	END CATCH
+COMMIT TRAN
+
 
 GO
 CREATE or alter PROCEDURE insertMedicalRecord
@@ -577,7 +648,7 @@ BEGIN
     RETURN;
   END
 
-  if (@drug_quantity<(select drug_stock_quantity from Drug where drug_id = @drug_id))
+  if (@drug_quantity>(select drug_stock_quantity from Drug where drug_id = @drug_id))
   begin
     RAISERROR(N'Thuốc trong kho không đủ cấp', 16, 1);
     RETURN;
