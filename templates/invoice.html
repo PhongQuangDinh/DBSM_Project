@@ -81,25 +81,37 @@
               <table>
                 <thead>
                     <tr>
-                        <th>Người phụ trách</th>
-                        <th>Tổng tiền cần trả</th>
-                        <th>Ngày thực hiện thanh toán</th>
+                        <th>Mã hóa đơn</th>
+                        <th>Chi phí dịch vụ</th>
+                        <th>Chi phí cuộc hẹn</th>
+                        <th>Chi phí thuốc</th>
+                        <th>Tổng chi phí</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Mã bệnh nhân</th>
+                        <th>Mã hồ sơ y tế</th>
                         <th style="min-width: 100px;"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for invoice in invoices %}
+                    {% for bill in invoices %}
                         <tr>
-                            <td>{{ invoice.dentist_id}}</td>
-                            <td>{{ invoice.total_cost}}</td>
-                            <td>{{ invoice.paid_money}}</td>
-                            <td><div class="div-33">
-                              <a href="/invoicedetail?get_payment_id={{ invoice.payment_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a>
-                            </div></td>
+                            <td>{{ bill.bill_id }}</td>
+                            <td>{{ bill.service_cost }}</td>
+                            <td>{{ bill.appointment_cost }}</td>
+                            <td>{{ bill.drugs_cost }}</td>
+                            <td>{{ bill.cost_total }}</td>
+                            <td>{{ bill.payment_date }}</td>
+                            <td>{{ bill.patient_id }}</td>
+                            <td>{{ bill.medical_record_id }}</td>
+                            <td>
+                                <div class="div-33">
+                                    <a href="/invoicedetail?get_bill_id={{ bill.bill_id }}" style="text-decoration: none; color: inherit;">Chi tiết</a>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
-              </table>
+            </table>
             </div>
         </div>
       </div>
