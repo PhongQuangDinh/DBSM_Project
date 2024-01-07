@@ -606,12 +606,23 @@ def updateprescription():
 
 @app.route('/appointment', methods = ['POST','GET'])
 def appointment():
-    date = request.form.get('date')
-    time = request.form.get('time')
-    cursor.execute('''SELECT * FROM Appointment a Join Person p on a.dentist_id = p.person_id''')
+    cursor.execute('SELECT * FROM Appointment')
     appointments = cursor.fetchall()
     return render_template('appointment.html', appointments = appointments)
 
+
+@app.route('/addappointment', methods = ['POST','GET'])
+def addappointment():
+    if request.method == 'POST':
+        patient_id = request.form.get('patient_id')
+        dentist_id = request.form.get('dentist_id')
+        appointment_start_time = request.form.get('appointment_start_time')
+        appointment_date = request.form.get('appointment_date')
+
+        # Execute the stored procedure
+        cursor.execute("EXEC insertAppointment ?, ?, ?, ?", (patient_id, dentist_id, appointment_start_time, appointment_date))
+
+    return render_template('addappointment.html')
 
 @app.route('/selectAppointment', methods = (['POST', 'GET']))
 def selectAppointment():
