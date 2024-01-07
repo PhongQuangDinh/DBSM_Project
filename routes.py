@@ -354,6 +354,7 @@ def treatmentplandetail():
 @app.route('/medicalrecorddetail', methods = ['POST','GET'])
 def medicalrecorddetail():
     treatment_plan_id = request.args.get('get_medical_record_id')
+    print(treatment_plan_id)
     cursor.execute('SELECT * FROM ServiceList join Service on ServiceList.service_id = Service.service_id where medical_record_id = ?', treatment_plan_id)
     treatment = cursor.fetchone()
     cursor.execute('SELECT * FROM Prescription join drug on Prescription.drug_id = drug.drug_id where medical_record_id =?', treatment_plan_id)
